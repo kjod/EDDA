@@ -1,0 +1,167 @@
+---
+title: "Assignment 3, EDDA 2017"
+author: "Martin de la Riva(11403799) and Kieran O'Driscoll(11426438), Group 23"
+date: "24 April 2017"
+output:
+  pdf_document: default 
+  html_document: default
+highlight: tango
+fontsize: 11pt
+---
+
+## Exercise 1
+## Q1
+```{r}
+data = read.table("data/peruvians.txt", header=TRUE)
+pairs(data[,-c(5,6,7)])
+#labels = colnames(data)[-c(5,6,7)]
+#counter = 1
+#for(i in data[,-c(5,6,7)]) {
+#  plot(i, migration, main=paste(labels[counter]," vs migration"), xlab=labels[counter], #ylab="Migration", pch=19)
+#  abline(lm(migration~i), col="red") # regression line (y~x) 
+#  counter = counter + 1 
+#}
+```
+Based on the diagram above, age, weight and perhaps a case can be made for diastolic. These were chosen because their scatter plots show a cluster that shows the values are in porportion with migration whereas the othe graphs have a scatter plot that don't show any connection with migration.
+
+##Q2
+```{r}
+ qqnorm(data[['length']])
+```
+
+Peruvians is not drawn from a normal distrubution so therefore using Spearmen correlation test.
+
+```{r}
+cor.test(age,migration,method="spearman")
+```
+The p-value recived
+
+```{r}
+cor.test(length,migration,method="spearman")
+```
+
+```{r}
+cor.test(wrist,migration,method="spearman")
+```
+
+```{r}
+cor.test(systolic,migration,method="spearman")
+```
+
+```{r}
+cor.test(diastolic,migration,method="spearman")
+```
+
+```{r}
+cor.test(weight,migration,method="spearman")
+```
+
+##Exercise 1
+##Q1
+
+```{r, eval=FALSE}
+data = read.table("data/run.txt", header=TRUE)
+boxplot(before~drink,data=data, main="Energy Drink", 
+  	xlab="Engery Drink", ylab="Perfomance Before")
+boxplot(after~drink,data=data, main="Energy Drink", 
+  	xlab="Engery Drink", ylab="Perfomance After")
+#plot(i, migration, main=paste(labels[counter]," vs migration"), xlab=labels[counter], ylab="Migration", pch=19)
+#abline(lm(migration~i), col="red") # regression line (y~x) 
+```
+
+##Q2
+```{r, echo=FALSE}
+filters = c('energy', 'lemo')
+for (i in filters) {
+  filter = data['drink'] == i
+  print(i)
+  
+  get_mean_diff=function(x,y) {mean(x-y)}#might need to change this
+  B=1000
+  result=numeric(B)
+  for (i in 1:B)
+  {
+    new_data=t(apply(cbind(data['before'][filter],data['after'][filter]),1,sample))
+    result[i]=get_mean_diff(new_data[,1],new_data[,2])
+  }
+  value=get_mean_diff(data['before'][filter],data['after'][filter])#seperating value
+  
+  print(value)
+  hist(result)
+  pl=sum(result<value)/B
+  pr=sum(result>value)/B
+  p=2*min(pl,pr)
+  print(p)
+}
+
+```
+
+
+##Q3
+```{r, echo=FALSE}
+data['diff'] = data['after'] - data['before'] #absoulute
+attach(data)
+mystat=function(x) sum(residuals(x)^2)
+B=1000
+tstar=numeric(B)
+for (i in 1:B)
+{
+  treatstar=sample(drink) ## permuting the labels
+  tstar[i]=mystat(lm(diff~treatstar))
+}
+myt=mystat(lm(diff~drink))
+hist(tstar)
+myt
+pl=sum(tstar<myt)/B
+pr=sum(tstar>myt)/B
+pl
+
+```
+
+##Q4
+
+##Q5
+
+##Q6
+
+```{r, echo=FALSE}
+
+```
+
+## Exercise 3
+##Q1
+```{r}
+data = read.table("data/dogs.txt", header=TRUE)
+boxplot(data,data=data)
+
+qqnorm(data[['isofluorane']])
+qqnorm(data[['halothane']])
+qqnorm(data[['cyclopropane']])
+
+#boxplot(after~drink,data=data, main="Energy Drink", 
+#  	xlab="Engery Drink", ylab="Perfomance After")
+```
+
+
+
+###Q2
+
+```{r}
+attach(data)
+pvcaov=lm(isofluorane~halothane*cyclopropane,data=data)
+anova(pvcaov)
+```
+
+
+
+### Q3
+
+```{r}
+kruskal.test(isofluorane,halothane)
+kruskal.test(isofluorane,cyclopropane)
+kruskal.test(cyclopropane,halothane)
+```
+
+
+
+
