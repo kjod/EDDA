@@ -3,6 +3,7 @@ klm = scan("klm.txt")
 # Assuming maximum delivery duration of this parts is 70,
 # we remove outliers (parts that are more than 70 days)
 klm <- klm[klm<71]
+par(mfrow=c(1,2))
 hist(klm)
 qqnorm(klm)
 

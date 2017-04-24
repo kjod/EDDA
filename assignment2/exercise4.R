@@ -39,8 +39,8 @@ ks.test(sqrt_clouds_1,sqrt_clouds_2)
 # We also get exactly the same value as in the previous Kolgomorov-Smirnov test.
 
 # 3.
-sqrt_clouds_1 = sqrt(sqrt_clouds_1)
-sqrt_clouds_2 = sqrt(sqrt_clouds_2)
+sqrt_clouds_1 = sqrt(sqrt(clouds[,1]))
+sqrt_clouds_2 = sqrt(sqrt(clouds[,2]))
 t.test(sqrt_clouds_1,sqrt_clouds_2,paired=TRUE)
 wilcox.test(sqrt_clouds_1,sqrt_clouds_2)
 ks.test(sqrt_clouds_1,sqrt_clouds_2)
