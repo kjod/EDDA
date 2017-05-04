@@ -3,8 +3,8 @@ title: "Assignment 2, EDDA 2017"
 author: "Martin de la Riva and Kieran O'Driscoll, group 23"
 date: "24 April 2017"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 highlight: tango
 fontsize: 11pt
 ---
@@ -73,7 +73,7 @@ par(mfrow=c(1,1))
 boxplot(light1, light2, light3)
 ```
 
-Michelson second experiment coincides with Newcomb measurements, while Michelson's first experiment (light1) differs from them others.  
+Michelson second experiment coincides with Newcomb measurements, while Michelson's first experiment (light1) differs from the others.  
 Although histograms weren't as helpful as we expected them to be, the Boxplots were really useful to see the similarities and differences between the datasets.
 
 ### 2.
@@ -114,7 +114,7 @@ qqnorm(klm)
 
 Assuming the maximum delivery duration of the parts is 70 days, we first ignore outliers that are out of that assumption.  
 In order to test the median we can know two methods, a sign test or a Wilcoxon test. Looking at the histogram and QQ-plot, we can assume the data to stem from a symmetric population with a certain median. Therefore, we can use Wilcoxon test, which is preferred as it is based on more information about the dataset.  
-In order to test wether the median is 32 or less, we will firstly test if it's equal to 32, and if it is rejected check lower values to see if it can have a lower median.
+In order to test wether the median is 32 or less, we will firstly test if it's equal to 32, and if it is rejected, we will check the lower values to see if it can have a lower median.
 
 ```{r}
 wilcox.test(klm,mu=32)

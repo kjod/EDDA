@@ -1,50 +1,97 @@
 ---
-title: "Assignment 3, EDDA 2017"
+title: "Assignment 4, EDDA 2017"
 author: "Martin de la Riva(11403799) and Kieran O'Driscoll(11426438), Group 23"
-date: "24 April 2017"
+date: "08 May 2017"
 output:
   pdf_document: default 
   html_document: default
 highlight: tango
 fontsize: 11pt
 ---
+```{r}
+library(multcomp)
+library(lme4)
+library(Rcmdr) #might remove
+```
 
-# Assignment 2
+# Assignment 4
 
 ## Exercise 1
 
 ### 1.
-For this exercise we first create an exponential distribution of a significant amount of elements with $\lambda = 0.035$. With this, we get a precise value fo what the median of such distribution is.  
+For this exercise  
 ```{r}
-telephone=read.table("telephone.txt",header=TRUE)
-
-# exponential distribution of 20000 elements
-exp_d = rexp(20000, rate=0.035)
-exp_d_median = median(exp_d)
+bread_data=read.table("data\\bread.txt", header=TRUE)
+#qqnorm(bread_data$hours[bread_data$humidity == "dry" & bread_data$environment == "cold"])
+#hist(bread_data$hours[bread_data$humidity == "dry" & bread_data$environment == "cold"])
+#2 way anova
+I=nrow(unique(bread_data['environment']))
+J=nrow(unique(bread_data['hours']));
+N=3 #number of tests per experiment
+randomization = rbind(rep(1:I,each=N*J),rep(1:J,N*I),sample(1:(N*I*J))) #randomization code
 ```
-Then, we perform a Wilcoxon test to see if the median is close to the previously mentioned distribution. In order to perform this test, we first have to assume that the data is a random sample from a symmetric population with a certain median m. By looking at the QQ-plot of the dataset, We can make the symmetric assumption and therefore go on with our Wilcoxon test. 
-```{r}
-# Test if data may come from a Symmetric population
-qqnorm(telephone[,"Bills"])
-```
-```{r}
-# Rejected, median is not close to exponential median
-wilcox.test(telephone[,"Bills"], mu = exp_d_median)
-```
-This results in a really low p-value, therefore rejecting the hypothesis that the data stems from an exponential distribution with rate $\lambda = 0.035$.
 
 ### 2.
+
+
 ```{r}
-par(mfrow=c(1,3))
-hist(telephone[,"Bills"])
-qqnorm(telephone[,"Bills"])
-boxplot(telephone[,"Bills"])
+par(mfrow=c(2,2))
+boxplot(hours~environment,data=bread_data, main="Plot of hours and environment", 
+  	xlab="Environment", ylab="Hours")
+boxplot(hours~humidity,data=bread_data, main="Plot of hours and humidity", 
+  	xlab="Humidity", ylab="Hours")
+attach(bread_data)
+
+interaction.plot(environment, humidity, hours)
+interaction.plot(humidity, environment, hours)
 ```
 
-It can be seen that most people pay around 0 to 20\$. If you wanna be competitive you should start pricing around that value. 30-70\$ is an unsuccesfull pricing, as it has the lowest clients, while it starts to increase at more than 70\$.
 
-In Conclusion:  
-Either offer a cheap service of less than 30\$; or create a high quality service with a price lower than 80\$, so you win clients that are used to pay more.
+### 3
+
+```{r}
+#Analysisof variance
+#2 way alnova
+bread_data$environment=as.factor(bread_data$environment)
+bread_data$humidity=as.factor(bread_data$humidity)
+pvcaov=lm(hours~environment*humidity,data=bread_data)
+print(anova(pvcaov))
+```
+
+
+### 4.
+
+```{r}
+contrasts(bread_data$environment)=contr.sum
+contrasts(bread_data$humidity)=contr.sum
+pvcaov2=lm(hours~environment*humidity, data=bread_data)
+print(summary(pvcaov2))
+```
+
+
+```{r}
+  print(confint(pvcaov2))
+```
+
+
+###5.
+
+```{r}
+  qqnorm(residuals(pvcaov2))
+```
+Not normal so probably contains outliers
+```{r}
+print(residuals(pvcaov2)) # look for residuals that are outside std
+```
+
+```{r}
+  cooks.distance(pvcaov2)
+  #plot point on graph with cooks distance and levenes distance
+  #library(car)  influencePlot(pvcaov2)
+```
+
+
+
 
 ## Exercise 2
 Firstly, we have different measures in the datasets. We need to transform these values in order to have the 3 datasets with the same measures and criteria.  
