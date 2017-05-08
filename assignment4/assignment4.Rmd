@@ -11,7 +11,6 @@ fontsize: 11pt
 ```{r}
 library(multcomp)
 library(lme4)
-library(Rcmdr) #might remove
 ```
 
 # Assignment 4
@@ -117,7 +116,7 @@ interaction.plot(interface, skill, time)
 ```
 Big correlations!!
 
-### 2.
+### 3.
 
 ```{r}
 search_data=read.table("data\\search.txt", header=TRUE)#need for reset 
@@ -126,6 +125,84 @@ search_data['skill'] = apply(search_data['skill'], 1, f)
 f = (function (x) gsub(" ", "", paste("interface.", x), fixed = TRUE))
 search_data['interface'] = apply(search_data['interface'], 1, f)
 
-#xtabs(yield~treat+blend,data=penicillin)
+temp_data = search_data
+temp_data['interface'] = paste("interface", temp_data['interface']) #change to category
+new_data = xtabs(time~interface+skill,data=search_data)
+
+aovpen=lm(time~interface+skill,data=search_data)
+print(anova(aovpen))
+print(summary(aovpen))
 
 ```
+
+### 4.
+4. Estimate the time it takes a typical user of skill level 4 to find the product
+on the website if the website uses interface 3.
+
+```{r}
+par(mfrow=c(2,1))
+attach(search_data)
+interaction.plot(skill,interface,time)
+interaction.plot(interface,skill,time) 
+
+```
+
+###5.
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(residuals(aovpen))
+plot(fitted(aovpen),residuals(aovpen))
+
+```
+
+###6.
+
+```{r}
+friedman.test(time,interface,skill)
+```
+
+###7.
+
+```{r}
+aovpen=lm(time~interface,data=search_data)
+print(anova(aovpen))
+print(summary(aovpen))
+```
+
+###Excercise 3
+
+```{r}
+cream_data=read.table("data\\cream.txt", header=TRUE)
+#starter+batch+position
+cream_data['position'] = factor(cream_data$position)
+cream_data['batch'] = factor(cream_data$batch)
+cream_data['starter'] = factor(cream_data$starter)
+model = lm(acidity???starter+batch+position, data=cream_data)
+print(model)
+```
+
+
+###2.
+```{r}
+pvcaov=lm(acidity???starter+batch+position, data=cream_data)
+summary(pvcaov)
+
+##error
+pvcmult=glht(pvcaov,linfct=mcp(resin == 1))
+summary(pvcmult)
+
+#pvcmult=glht(model,linfct=mcp(starter))
+'pvcmult
+```
+
+
+###3.
+
+```{r}
+summary(model)
+
+```
+
+##4.
+
