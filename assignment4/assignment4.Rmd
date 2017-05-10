@@ -172,6 +172,8 @@ print(summary(aovpen))
 
 ###Excercise 3
 
+###1
+
 ```{r}
 cream_data=read.table("data\\cream.txt", header=TRUE)
 #starter+batch+position
@@ -185,15 +187,8 @@ print(model)
 
 ###2.
 ```{r}
-pvcaov=lm(acidity???starter+batch+position, data=cream_data)
-summary(pvcaov)
-
-##error
-pvcmult=glht(pvcaov,linfct=mcp(resin == 1))
+pvcmult=glht(model,linfct=mcp(starter="Tukey"))
 summary(pvcmult)
-
-#pvcmult=glht(model,linfct=mcp(starter))
-'pvcmult
 ```
 
 
@@ -205,4 +200,44 @@ summary(model)
 ```
 
 ##4.
+
+```{r}
+confint(pvcmult)
+```
+
+###Excercise 4
+
+###1.
+```{r}
+cow_data=read.table("data\\cow.txt", header=TRUE)
+cow_data$id=factor(cow_data$id)
+cow_data$per=factor(cow_data$per)
+model=lm(milk~treatment+per+id,data=cow_data)
+summary(model)
+```
+
+###2.
+
+###3.
+
+```{r}
+mixed_model=lmer(milk~treatment+order+per+(1|id),data=cow_data,REML=FALSE)
+print(summary(mixed_model))
+
+```
+
+
+```{r}
+mixed_model2=lmer(milk~order+per+(1|id),data=cow_data,REML=FALSE)
+anova(mixed_model2,mixed_model)
+
+```
+
+###4.
+
+```{r}
+attach(cow_data)
+t.test(milk[treatment=="A"],milk[treatment=="B"],paired=TRUE)
+```
+
 
