@@ -1,9 +1,10 @@
 ---
-title: "Assignment 4, EDDA 2017"
+title: "Assignment 4 & 5, EDDA 2017"
 author: "Martin de la Riva(11403799) and Kieran O'Driscoll(11426438), Group 23"
 date: "08 May 2017"
 output:
-  pdf_document: default 
+  word_document: default
+  pdf_document: default
   html_document: default
 highlight: tango
 fontsize: 11pt
@@ -139,7 +140,7 @@ interaction.plot(skill, interface, time)
 interaction.plot(interface, skill, time)
 
 ```
-As expected, the increase in skill level(in this case the skill variable descends to indicate a better skill level) the increase in the time spent. What can be seen is that the skill levels are generally consistent across the interfaces with more skilled individuals generally quicker. Most usersare quicker ion interface 1 while certain skill levels are better on particular interfaces so such as interface 2 and skill level 2. This could be an anomaly due to the small sample size.
+As expected, the increase in skill level(in this case the skill variable descends to indicate a better skill level) the increase in the time spent. What can be seen is that the skill levels are generally consistent across the interfaces with more skilled individuals generally quicker. Most users are quicker in interface 1 while certain skill levels are better on particular interfaces such as interface 2 and skill level 2. This could be an anomaly due to the small sample size.
 
 ### 3.
 
@@ -158,13 +159,13 @@ print(summary(aovpen))
 
 ```
 
-The p-value for the null hypothesis for all interfaces is 0.01310. This falls below the level of 0.05 and therefore the null hypothesis can be rejected. Therefor the search time for all interfaces is different.  
+The p-value for the null hypothesis for all interfaces is 0.01310. This falls below the level of 0.05 and therefore the null hypothesis can be rejected. Therefore the search time for all interfaces is different.  
 
 ### 4.
-This can be estimated using the interaction graphs's. By looking at skill level 4 and interface 3 on the interaction graph, the mean time can be estimated to be 22.5.
+This can be estimated using the interaction graphs. By looking at skill level 4 and interface 3 on the interaction graph, the mean time can be estimated to be 22.5.
 
 ```{r}
-par(mfrow=c(2,1))
+par(mfrow=c(1,2))
 attach(search_data)
 interaction.plot(skill,interface,time)#draw line on graph
 interaction.plot(interface,skill,time) 
@@ -179,7 +180,7 @@ qqnorm(residuals(aovpen))
 plot(fitted(aovpen),residuals(aovpen))
 
 ```
-The data looks like it is distrubuted normally with the exception the top right values and the bottom ones. However by analysing the scatter there does not seem to be any outliers. To check this futher cooks distance will be used.
+The data looks like it is distrubuted normally with the exception the top right values and the bottom ones. However by analysing the scatter there does not seem to be any outliers. To check this futher, cooks distance will be used.
 ```{r}
 round(cooks.distance(aovpen),2)
 ```
@@ -212,11 +213,11 @@ aovpen=lm(time~interface,data=search_data)
 print(anova(aovpen))
 print(summary(aovpen))
 ```
-P value is 0.09642 which means the null hypothesis cannot be rejected. This is not a good test to perform beacuse by ignoring the skill variable you cannot the check the effect of the interface with respect to the skill levels. it might be the case that certain skill levels perform better on different interfaces.
+The p value is 0.09642 which means the null hypothesis cannot be rejected. This is not a good test to perform beacuse by ignoring the skill variable you cannot the check the effect of the interface with respect to the skill levels. It might be the case that certain skill levels perform better on different interfaces.
 
 For this one way analysis to occur each sample should be an independent random sample, the distrubution of the target variable folows the normal distribution and that the variances  in the population are equal across target values for each group level.
 
-The sample of students can be presummed to be chosen at random from a normal population. The variance is balanced and the assumption of normaility is proven by the qplot of the residuals.
+The sample of students can be presummed to be chosen at random from a normal population. The variance is balanced and the assumption of normaility is proven by the q-plot of the residuals.
 
 ###Excercise 3
 
@@ -231,14 +232,14 @@ model = lm(acidity~starter+batch+position, data=cream_data)
 print(model)
 print(summary(model))
 ```
-From the model we can see starter 4 given a high coefficient along with batch 4. By taking the summary of the model we can gather that starter 4 has a the biggest effect while batch 2 and 4 have a smaller effect. The position variable does not seem to have any significant effect.
+From the model we can see starter 4 given a high coefficient along with batch 4. By taking the summary of the model we can gather that starter 4 has the biggest effect while batch 2 and 4 have a smaller effect. The position variable does not seem to have any significant effect.
 
 ###2.
 ```{r}
 pvcmult=glht(model,linfct=mcp(starter="Tukey"))
 summary(pvcmult)
 ```
-In this case the starters that lead to significantly different acidity re the ones that have p-values less than 0.05. These would include starters 4 and 5.
+In this case the starters that lead to significantly different acidity are the ones that have p-values less than 0.05. These would include starters 4 and 5.
 
 ###3.
 
@@ -246,7 +247,7 @@ In this case the starters that lead to significantly different acidity re the on
 summary(model)
 
 ```
-These are found in the p-values. Starters 4 6.10e-05. No as only on comparison is done where as in the simultaneous p-value, checks are done with regards to each of the other starters.
+These are found in the p-values Starter 4 6.10e-05. No, as only one comparison is done where as in the simultaneous p-value, checks are done with regards to each of the other starters.
 
 
 ##4.
@@ -282,7 +283,7 @@ mixed_model=lmer(milk~treatment+order+per+(1|id),data=cow_data,REML=FALSE)
 print(summary(mixed_model))
 
 ```
-It is estimated you would get -0.51 less milk prodcution which is the same as the fixed results model. There is an estimated variance of 133.145of the normal population of the "individual effects". 
+It is estimated you would get -0.51 less milk prodcution which is the same as the fixed results model. There is an estimated variance of 133.145 of the normal population of the "individual effects". 
 
 ```{r}
 mixed_model2=lmer(milk~order+per+(1|id),data=cow_data,REML=FALSE)
@@ -304,9 +305,9 @@ par(mfrow=c(1,2))
 hist(milk[treatment=="A"])
 hist(milk[treatment=="B"])
 ```
-The distrubution of treatment a does not look to have been drawn from a normal distribution but this could be a lack of data. If one of the populations from A or B are not drawn froma  normal distrubution the paired t-test should not be used.
+The distrubution of treatment a does not look to have been drawn from a normal distribution but this could be a lack of data. If one of the populations from A or B are not drawn from a  normal distrubution then the paired t-test should not be used.
 
-The paired t-test does not take into the account the order in which treatment was applied or the period is was applied in. The p-value does not reject null hypothesis whhich is the same conclusion as the fixed effects model. However the fixed effects model is a much better test as it analyses the treatements and the periods along with the id of each cow. In the fixed effects model it is implied that cow itself is has a big effect if a treatement works or not. 
+The paired t-test does not take into the account the order in which the treatment was applied or the period is was applied in. The p-value does not reject the null hypothesis which is the same conclusion as the fixed effects model. However the fixed effects model is a much better test as it analyses the treatements and the periods along with the id of each cow. In the fixed effects model it is implied that the cow itself has a big effect if a treatement works or not. 
 
 
 # Assignment 5
@@ -316,7 +317,7 @@ The paired t-test does not take into the account the order in which treatment wa
 ###1.
 
 ```{r}
-nauseatable=read.table('nauseatable.txt', header=TRUE)
+nauseatable=read.table('data\\nauseatable.txt', header=TRUE)
 
 nausea=c()
 medicin=c()
@@ -373,7 +374,7 @@ Chi-Square test returns a really similar value as the one in the permutation tes
 
 ###1.
 ```{r}
-airpollution=read.table('airpollution.txt', header=TRUE)
+airpollution=read.table('data\\airpollution.txt', header=TRUE)
 pairs(airpollution)
 ```
 
@@ -437,6 +438,8 @@ The normality assumption of the residuals seems correct, and it therefore seems 
 ###Finding a model
 
 ```{r, collapse=TRUE}
+expensescrime=read.table('data\\expensescrime.txt', header=TRUE)
+
 ### step-down model
 summary(lm(expend~employ+lawyers+pop+bad+crime, data=expensescrime))
 # delete crime
