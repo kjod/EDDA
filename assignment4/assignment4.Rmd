@@ -53,7 +53,7 @@ bread_data$humidity=as.factor(bread_data$humidity)
 pvcaov=lm(hours~environment*humidity,data=bread_data)
 print(anova(pvcaov))
 ```
-
+Neither the effects of the humidity or environment are significantly different from 0 as they have really low p-values. This falls under the 0.05 range meaning that they have an effect. The interaction also falls below 0.05 meaning there is evidence that the two are not independent and that their interaction has an effect.
 
 ### 4.
 
@@ -63,10 +63,11 @@ contrasts(bread_data$humidity)=contr.sum
 pvcaov2=lm(hours~environment*humidity, data=bread_data)
 print(summary(pvcaov2))
 ```
-
+Out of the two factors, environment has the greatest influence on the
+decay. This can be seen in by looking at the p values for the environment above and by analysing the box plots and interaction graphs earlier. The box plot inparticular show a clear difference between the types of environment and the result in the deacay with cold environments taking much longer for decay. However this is not a good question as from ealier analysis and by taking a look at the interaction graph it clear the the environment and humidity have an effect on each other. Therefore to it is hard to say which factor has the biggest effect as each factor is being influenced by the other. 
 
 ```{r}
-  print(confint(pvcaov2))
+  #print(confint(pvcaov2)) #not sure if needed
 ```
 
 
@@ -75,18 +76,42 @@ print(summary(pvcaov2))
 ```{r}
   qqnorm(residuals(pvcaov2))
 ```
-Not normal so probably contains outliers
+From the qplot it does not seem to be a normal distrubution so the data probably contains some outliers.
 ```{r}
 print(residuals(pvcaov2)) # look for residuals that are outside std
 ```
+The residuals for the model could indicate some potential outliers. The extreme values for 7 and 8 could be two outliers.
 
 ```{r}
-  cooks.distance(pvcaov2)
+round(cooks.distance(pvcaov2),2)
+```
+
+```{r}
+plot(1:18,cooks.distance(pvcaov2))
+```
+Looking at cooks distance confirms suspicion that 7 and 8 are outliers.
+
+```{r}
+  par(mfrow=c(1,2))
+  plot(fitted(pvcaov2),residuals(pvcaov2))
+  #plot(fitted(pvcaov),residuals(pvcaov))
+  bread_data2 = bread_data[append(append(c(1:5), c(9:16)), c(17:18)),]
+  pvcaov=lm(hours~environment*humidity,data=bread_data2)
+
+  plot(fitted(pvcaov),residuals(pvcaov))
+
+  #print(anova(pvcaov))
+  #cooks.distance(pvcaov2)
   #plot point on graph with cooks distance and levenes distance
   #library(car)  influencePlot(pvcaov2)
 ```
 
-
+```{r}
+ #par(mfrow=c(1,2))
+ #qqnorm(residuals(pvcaov2))
+ qqnorm(residuals(pvcaov))
+```
+By removing the two outliers, a qplot that better resembles a normal distrubution is displayed.
 
 
 ## Exercise 2
@@ -114,20 +139,18 @@ interaction.plot(skill, interface, time)
 interaction.plot(interface, skill, time)
 
 ```
-Big correlations!!
+As expected, the increase in skill level(in this case the skill variable descends to indicate a better skill level) the increase in the time spent. What can be seen is that the skill levels are generally consistent across the interfaces with more skilled individuals generally quicker. Most usersare quicker ion interface 1 while certain skill levels are better on particular interfaces so such as interface 2 and skill level 2. This could be an anomaly due to the small sample size.
 
 ### 3.
 
 ```{r}
 search_data=read.table("data\\search.txt", header=TRUE)#need for reset 
-f = (function (x) gsub(" ", "", paste("skill.", x), fixed = TRUE))
-search_data['skill'] = apply(search_data['skill'], 1, f)
-f = (function (x) gsub(" ", "", paste("interface.", x), fixed = TRUE))
-search_data['interface'] = apply(search_data['interface'], 1, f)
+search_data['skill'] = search_data$skill=as.factor(search_data$skill)
+search_data['interface'] = search_data$interface=as.factor(search_data$interface)
 
-temp_data = search_data
-temp_data['interface'] = paste("interface", temp_data['interface']) #change to category
-new_data = xtabs(time~interface+skill,data=search_data)
+#temp_data = search_data
+#temp_data['interface'] = paste("interface", temp_data['interface']) #change to category
+#new_data = xtabs(time~interface+skill,data=search_data)
 
 aovpen=lm(time~interface+skill,data=search_data)
 print(anova(aovpen))
@@ -135,14 +158,15 @@ print(summary(aovpen))
 
 ```
 
+The p-value for the null hypothesis for all interfaces is 0.01310. This falls below the level of 0.05 and therefore the null hypothesis can be rejected. Therefor the search time for all interfaces is different.  
+
 ### 4.
-4. Estimate the time it takes a typical user of skill level 4 to find the product
-on the website if the website uses interface 3.
+This can be estimated using the interaction graphs's. By looking at skill level 4 and interface 3 on the interaction graph, the mean time can be estimated to be 22.5.
 
 ```{r}
 par(mfrow=c(2,1))
 attach(search_data)
-interaction.plot(skill,interface,time)
+interaction.plot(skill,interface,time)#draw line on graph
 interaction.plot(interface,skill,time) 
 
 ```
@@ -155,12 +179,31 @@ qqnorm(residuals(aovpen))
 plot(fitted(aovpen),residuals(aovpen))
 
 ```
+The data looks like it is distrubuted normally with the exception the top right values and the bottom ones. However by analysing the scatter there does not seem to be any outliers. To check this futher cooks distance will be used.
+```{r}
+round(cooks.distance(aovpen),2)
+```
+
+```{r}
+plot(1:15,cooks.distance(aovpen))
+```
+There is potentially two outliers, 14 and 6. 
+
+```{r}
+  search_data2 = search_data[append(append(c(1:5), c(7:13)), c(15:15)),]
+  aovpen2=lm(time~interface+skill,data=search_data)
+  qqnorm(residuals(aovpen2))
+```
+By removing the outliers the q-plot looks more like a normal distribution.
+
 
 ###6.
 
 ```{r}
 friedman.test(time,interface,skill)
 ```
+
+The p-value is 0.04076 is below 0.05 confidence level so the null hull hypothesis can be rejected. Therefore there is an effect on the interface.  
 
 ###7.
 
@@ -169,6 +212,11 @@ aovpen=lm(time~interface,data=search_data)
 print(anova(aovpen))
 print(summary(aovpen))
 ```
+P value is 0.09642 which means the null hypothesis cannot be rejected. This is not a good test to perform beacuse by ignoring the skill variable you cannot the check the effect of the interface with respect to the skill levels. it might be the case that certain skill levels perform better on different interfaces.
+
+For this one way analysis to occur each sample should be an independent random sample, the distrubution of the target variable folows the normal distribution and that the variances  in the population are equal across target values for each group level.
+
+The sample of students can be presummed to be chosen at random from a normal population. The variance is balanced and the assumption of normaility is proven by the qplot of the residuals.
 
 ###Excercise 3
 
@@ -176,21 +224,21 @@ print(summary(aovpen))
 
 ```{r}
 cream_data=read.table("data\\cream.txt", header=TRUE)
-#starter+batch+position
-cream_data['position'] = factor(cream_data$position)
-cream_data['batch'] = factor(cream_data$batch)
-cream_data['starter'] = factor(cream_data$starter)
-model = lm(acidity???starter+batch+position, data=cream_data)
+cream_data$position = factor(cream_data$position)
+cream_data$batch = factor(cream_data$batch)
+cream_data$starter = factor(cream_data$starter)
+model = lm(acidity~starter+batch+position, data=cream_data)
 print(model)
+print(summary(model))
 ```
-
+From the model we can see starter 4 given a high coefficient along with batch 4. By taking the summary of the model we can gather that starter 4 has a the biggest effect while batch 2 and 4 have a smaller effect. The position variable does not seem to have any significant effect.
 
 ###2.
 ```{r}
 pvcmult=glht(model,linfct=mcp(starter="Tukey"))
 summary(pvcmult)
 ```
-
+In this case the starters that lead to significantly different acidity re the ones that have p-values less than 0.05. These would include starters 4 and 5.
 
 ###3.
 
@@ -198,12 +246,16 @@ summary(pvcmult)
 summary(model)
 
 ```
+These are found in the p-values. Starters 4 6.10e-05. No as only on comparison is done where as in the simultaneous p-value, checks are done with regards to each of the other starters.
+
 
 ##4.
 
 ```{r}
 confint(pvcmult)
 ```
+
+In 95% of all experiments all intervals will cover the true difference with the exception of starter 3.
 
 ###Excercise 4
 
@@ -213,10 +265,15 @@ cow_data=read.table("data\\cow.txt", header=TRUE)
 cow_data$id=factor(cow_data$id)
 cow_data$per=factor(cow_data$per)
 model=lm(milk~treatment+per+id,data=cow_data)
-summary(model)
+model
 ```
 
 ###2.
+
+```{r}
+summary(model)
+```
+There is no significant effect in the treatment but there is an effect in the period. It is estimated you would get -0.51 less milk prodcution.
 
 ###3.
 
@@ -225,13 +282,15 @@ mixed_model=lmer(milk~treatment+order+per+(1|id),data=cow_data,REML=FALSE)
 print(summary(mixed_model))
 
 ```
-
+It is estimated you would get -0.51 less milk prodcution which is the same as the fixed results model. There is an estimated variance of 133.145of the normal population of the "individual effects". 
 
 ```{r}
 mixed_model2=lmer(milk~order+per+(1|id),data=cow_data,REML=FALSE)
 anova(mixed_model2,mixed_model)
 
 ```
+
+The results are the same with no significat difference in the treatment.
 
 ###4.
 
@@ -240,4 +299,12 @@ attach(cow_data)
 t.test(milk[treatment=="A"],milk[treatment=="B"],paired=TRUE)
 ```
 
+```{r}
+par(mfrow=c(1,2))
+hist(milk[treatment=="A"])
+hist(milk[treatment=="B"])
+```
+The distrubution of treatment a does not look to have been drawn from a normal distribution but this could be a lack of data. If one of the populations from A or B are not drawn froma  normal distrubution the paired t-test should not be used.
+
+The paired t-test does not take into the account the order in which treatment was applied or the period is was applied in. The p-value does not reject null hypothesis whhich is the same conclusion as the fixed effects model. However the fixed effects model is a much better test as it analyses the treatements and the periods along with the id of each cow. In the fixed effects model it is implied that cow itself is has a big effect if a treatement works or not. 
 
