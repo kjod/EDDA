@@ -328,6 +328,8 @@ for(i in 1:nrow(nauseatable)){
 }
 
 nausea.frame=data.frame(nausea,medicin)
+#print(nausea.frame)
+
 ```
 
 With this code, an appropiate data frame is created from any table of the same characteristics.
