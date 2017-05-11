@@ -239,15 +239,12 @@ From the model we can see starter 4 given a high coefficient along with batch 4.
 pvcmult=glht(model,linfct=mcp(starter="Tukey"))
 summary(pvcmult)
 ```
-In this case the starters that lead to significantly different acidity are the ones that have p-values less than 0.05. These would include starters 4 and 5.
+
+The combined starters with p-value less than 0.05 lead to significantly different acidity. These includes the pairs (4,1),(4,2),(4,3) and (5,4).
 
 ###3.
 
-```{r}
-summary(model)
-
-```
-These are found in the p-values Starter 4 6.10e-05. No, as only one comparison is done where as in the simultaneous p-value, checks are done with regards to each of the other starters.
+In that first summary, the hypothesis $H_0:\alpha_2=\alpha_1$ are for the effects in starter, while in the comparison test between starter, it's for the main effect in the $j$th starter. It is no coincidence, as in the first summary only one comparison is done where as in the simultaneous p-value, checks are done with regards to each of the other starters.
 
 
 ##4.
@@ -256,8 +253,7 @@ These are found in the p-values Starter 4 6.10e-05. No, as only one comparison i
 confint(pvcmult)
 ```
 
-In 95% of all experiments all intervals will cover the true difference with the exception of starter 3.
-
+The pairs that do not contain 0 are (4,1),(4,2),(4,3) and (5,4), which are exactly the ones with p-value < 0.05. In 95% of all experiments those 4 intervals will cover the true difference.
 ###Excercise 4
 
 ###1.
@@ -266,15 +262,13 @@ cow_data=read.table("data\\cow.txt", header=TRUE)
 cow_data$id=factor(cow_data$id)
 cow_data$per=factor(cow_data$per)
 model=lm(milk~treatment+per+id,data=cow_data)
-model
-```
-
-###2.
-
-```{r}
 summary(model)
 ```
-There is no significant effect in the treatment but there is an effect in the period. It is estimated you would get -0.51 less milk prodcution.
+There is no significant effect in the treatment but there is an effect in the period.
+
+###2.
+It is estimated you would get -0.51 less milk production, although it has a p-value of 0.51, denoting it does not have a significant difference.
+
 
 ###3.
 
@@ -283,7 +277,7 @@ mixed_model=lmer(milk~treatment+order+per+(1|id),data=cow_data,REML=FALSE)
 print(summary(mixed_model))
 
 ```
-It is estimated you would get -0.51 less milk prodcution which is the same as the fixed results model. There is an estimated variance of 133.145 of the normal population of the "individual effects". 
+It is estimated you would get -0.51 less milk production which is the same as the fixed results model. There is an estimated variance of 133.145 of the normal population of the "individual effects". 
 
 ```{r}
 mixed_model2=lmer(milk~order+per+(1|id),data=cow_data,REML=FALSE)
@@ -291,7 +285,7 @@ anova(mixed_model2,mixed_model)
 
 ```
 
-The results are the same with no significat difference in the treatment.
+The results are the same with no significat difference in the treatmen.t
 
 ###4.
 
@@ -305,9 +299,10 @@ par(mfrow=c(1,2))
 hist(milk[treatment=="A"])
 hist(milk[treatment=="B"])
 ```
-The distrubution of treatment a does not look to have been drawn from a normal distribution but this could be a lack of data. If one of the populations from A or B are not drawn from a  normal distrubution then the paired t-test should not be used.
 
-The paired t-test does not take into the account the order in which the treatment was applied or the period is was applied in. The p-value does not reject the null hypothesis which is the same conclusion as the fixed effects model. However the fixed effects model is a much better test as it analyses the treatements and the periods along with the id of each cow. In the fixed effects model it is implied that the cow itself has a big effect if a treatement works or not. 
+The distribution of treatment a does not look to have been drawn from a normal distribution but this could be due to a lack of data. If one of the populations from A or B are not drawn from a  normal distribution then the paired t-test should not be used.
+
+The paired t-test does not take into the account the order in which the treatment was applied or the period is was applied in. The p-value does not reject the null hypothesis which is the same conclusion as the fixed effects model. However the fixed effects model is a much better test as it analyses the treatements and the periods along with the id of each cow. In the fixed effects model it is implied that the cow itself has a big effect if a treatment works or not. 
 
 
 # Assignment 5
