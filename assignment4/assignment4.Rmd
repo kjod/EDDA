@@ -241,3 +241,109 @@ t.test(milk[treatment=="A"],milk[treatment=="B"],paired=TRUE)
 ```
 
 
+
+# Assignment 5
+
+## Exercise 1
+
+###1.
+
+```{r}
+nauseatable=read.table('nauseatable.txt', header=TRUE)
+
+nausea=c()
+medicin=c()
+for(i in 1:nrow(nauseatable)){
+  for(j in 1:ncol(nauseatable)){
+    medicin=append(medicin, rep(row.names(nauseatable)[i], nauseatable[i,j]))
+    nausea=append(nausea, rep(j-1, nauseatable[i,j]))
+  }
+}
+
+nausea.frame=data.frame(nausea,medicin)
+```
+
+With this code, an appropiate data frame is created from any table of the same characteristics.
+
+###2.
+```{r, collapse=TRUE}
+nauseatable
+xtabs(~medicin+nausea)
+```
+
+We can see that the xtabs code makes a table out of a data frame of 2 vectors. With this outcome we can confirm that the transformation of the data.frame is correct.
+
+###3.
+```{r}
+attach(nausea.frame)
+B=1000
+tstar=pstar=numeric(B)
+for (i in 1:B){
+    nausstar=sample(nausea) ## permuting the labels
+    tstar[i]=chisq.test(xtabs(~medicin+nausstar))[[1]]
+}
+myt=chisq.test(xtabs(~medicin+nausea))[[1]]
+hist(tstar)
+pl=sum(tstar<myt)/B
+pr=sum(tstar>myt)/B
+pr
+```
+
+Having as $H_0$=The different medicins work equally well against nausea.
+
+Really low chi-square values are registered (mostly less than 2) when permuting the labels. We get a (bootstrap fashion) p-value of around $0.042$. Therefore, we can reject the hypothesis. In other words, the different medicins work differently against nausea.
+
+###4.
+```{r}
+chisq.test(xtabs(~medicin+nausea))[[3]]
+```
+
+Chi-Square test returns a really similar value as the one in the permutation test.
+
+## Exercise 2
+
+###1.
+```{r}
+airpollution=read.table('airpollution.txt', header=TRUE)
+pairs(airpollution)
+```
+
+There seems to be clear relation between oxidant with temperature, insolation and wind. There also seems to be related with humidity and day (although not that clear). A linear model looks useful for this data.
+
+###2.
+```{r, collapse=TRUE}
+summary(lm(oxidant~insolation, data=airpollution))$r.squared#0.2551683
+summary(lm(oxidant~humidity, data=airpollution))$r.squared#0.12402
+summary(lm(oxidant~temperature, data=airpollution))$r.squared#0.5760164
+summary(lm(oxidant~wind, data=airpollution))$r.squared#0.5863157
+summary(lm(oxidant~day, data=airpollution))$r.squared#0.01093407
+```
+
+As said before, the most relevant variables for the linear model are (in order of importance): wind, temperature, insolation, humidity and day.
+
+Therefore, we will start with a linear model with wind as it's first explanatory variable, and we will add the variables that increase the determinant coefficient until it does not increase anymore (i.e. a step-up method).
+
+```{r, collapse=TRUE}
+summary(lm(oxidant~wind+temperature, data=airpollution))$r.squared
+summary(lm(oxidant~wind+temperature+humidity, data=airpollution))$r.squared
+summary(lm(oxidant~wind+temperature+insolation, data=airpollution))$r.squared
+summary(lm(oxidant~wind+temperature+day, data=airpollution))$r.squared
+summary(lm(oxidant~wind+temperature+insolation+humidity, data=airpollution))$r.squared
+summary(lm(oxidant~wind+temperature+insolation+humidity+day, data=airpollution))$r.squared
+```
+
+Looking at the $R^2$, it increases when adding more variables, although insignificantly in the last 3 additions. Investigating the summary and the p-value per variable, we can see that insolation, humidity and day do not apport much information.
+
+From the 3 least relevant variables (insolation, humidity and day), humidity seems to be the most relevant one, reaching a p-value of 0.131 (using hypothesis $H_0:\beta_i=0$) when having a wind+temperature+humidity model. Besides this, the p-value is above 0.05 and the increase in $R^2$ is still not significant. Therefore, we do not add it to the model, finishing with a simple oxidant~wind+temperature model.
+
+###3.
+```{r, collapse=TRUE}
+summary(lm(oxidant~wind+temperature+insolation+humidity+day, data=airpollution))
+summary(lm(oxidant~wind+temperature+insolation+humidity, data=airpollution))
+summary(lm(oxidant~wind+temperature+humidity, data=airpollution))
+summary(lm(oxidant~wind+temperature, data=airpollution))
+```
+
+Using a step-down process using the hypothesis $H_0:\beta_i=0$, we get that day, insolation and humidity get extracted from the model. This is as all of them have a p-value higher than 0.05 on every step, as it can be seen above. This leaves a linear model with wind+temperature.
+
+###4.
