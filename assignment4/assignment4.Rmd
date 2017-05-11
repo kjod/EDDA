@@ -324,17 +324,20 @@ As said before, the most relevant variables for the linear model are (in order o
 Therefore, we will start with a linear model with wind as it's first explanatory variable, and we will add the variables that increase the determinant coefficient until it does not increase anymore (i.e. a step-up method).
 
 ```{r, collapse=TRUE}
+summary(lm(oxidant~wind+humidity, data=airpollution))$r.squared
+summary(lm(oxidant~wind+insolation, data=airpollution))$r.squared
+summary(lm(oxidant~wind+day, data=airpollution))$r.squared
 summary(lm(oxidant~wind+temperature, data=airpollution))$r.squared
-summary(lm(oxidant~wind+temperature+humidity, data=airpollution))$r.squared
-summary(lm(oxidant~wind+temperature+insolation, data=airpollution))$r.squared
-summary(lm(oxidant~wind+temperature+day, data=airpollution))$r.squared
-summary(lm(oxidant~wind+temperature+insolation+humidity, data=airpollution))$r.squared
-summary(lm(oxidant~wind+temperature+insolation+humidity+day, data=airpollution))$r.squared
+# therefore we add temperature
+summary(lm(oxidant~wind+temperature+humidity, data=airpollution))
+summary(lm(oxidant~wind+temperature+insolation, data=airpollution))
+summary(lm(oxidant~wind+temperature+day, data=airpollution))
+# Adding none of the variables yields significance. Therefore we stop at the previous model.
 ```
 
-Looking at the $R^2$, it increases when adding more variables, although insignificantly in the last 3 additions. Investigating the summary and the p-value per variable, we can see that insolation, humidity and day do not apport much information.
+Looking at the $R^2$, it increases when adding more variables, although insignificantly when having added the most relevant ones. Investigating the summary and the p-value (using hypothesis $H_0:\beta_i=0$) using the full linear model, we can see that insolation, humidity and day do not apport much information.
 
-From the 3 least relevant variables (insolation, humidity and day), humidity seems to be the most relevant one, reaching a p-value of 0.131 (using hypothesis $H_0:\beta_i=0$) when having a wind+temperature+humidity model. Besides this, the p-value is above 0.05 and the increase in $R^2$ is still not significant. Therefore, we do not add it to the model, finishing with a simple oxidant~wind+temperature model.
+From those 3 variables, humidity seems to be the most relevant one, reaching a p-value of 0.131  when having a wind+temperature+humidity model. Besides this, the p-value is above 0.05 and the increase in $R^2$ is still not significant. Therefore, we do not add any more variables to the model, finishing with a oxidant~wind+temperature model.
 
 ###3.
 ```{r, collapse=TRUE}
@@ -347,3 +350,60 @@ summary(lm(oxidant~wind+temperature, data=airpollution))
 Using a step-down process using the hypothesis $H_0:\beta_i=0$, we get that day, insolation and humidity get extracted from the model. This is as all of them have a p-value higher than 0.05 on every step, as it can be seen above. This leaves a linear model with wind+temperature.
 
 ###4.
+Final model:
+
+$-5.20334 - 0.42706*wind + 0.52035*temperature + error$
+
+###5.
+```{r}
+lm1 = summary(lm(oxidant~wind+temperature, data=airpollution))
+qqnorm(residuals(lm1))
+shapiro.test(residuals(lm1))
+```
+
+The normality assumption of the residuals seems correct, and it therefore seems like a correct model.
+
+##Exercise 3
+
+###Finding a model
+
+```{r, collapse=TRUE}
+### step-down model
+summary(lm(expend~employ+lawyers+pop+bad+crime, data=expensescrime))
+# delete crime
+summary(lm(expend~employ+lawyers+pop+bad, data=expensescrime))
+# delete pop
+summary(lm(expend~employ+lawyers+bad, data=expensescrime))
+# delete bad
+summary(lm(expend~employ+lawyers, data=expensescrime))
+# done
+```
+
+Using a step-down approach to choose the variables of the linear model, we end up with expend~employ+lawyers. Step-up approach was also tested, leading to the same result.
+
+###Influence points
+```{r}
+lm2 = lm(expend~employ+lawyers, data=expensescrime)
+round(cooks.distance(lm2),2)
+plot(1:51, cooks.distance(lm2))
+```
+
+It can be clearly seen that the model has 2 influence points: point 5 and 8, with Cook's distances 5.47 and 6.38 respectively.
+
+###Collinearity
+```{r}
+pairs(lawyers~employ, data=expensescrime)
+```
+
+Graphically, a clear collinearity between the variables lawyers and employ can be seen.
+
+```{r}
+round(cor(expensescrime[,5:6]),2)
+```
+
+Numerically we confirm their collinearity (0.97). Therefore, we should remove one of the variables. Checking the models with both variables, we can decide to keep employ, as it has a higher determination coefficient. We end with a model of the form expend~employ.
+
+```{r}
+summary(lm(expend~lawyers, data=expensescrime))
+summary(lm(expend~employ, data=expensescrime))
+```
