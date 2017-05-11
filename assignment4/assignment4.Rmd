@@ -112,7 +112,7 @@ Looking at cooks distance confirms suspicion that 7 and 8 are outliers.
  #qqnorm(residuals(pvcaov2))
  qqnorm(residuals(pvcaov))
 ```
-By removing the two outliers, a qplot that better resembles a normal distrubution is displayed.
+By removing the two outliers, a qq-plot that better resembles a normal distribution is displayed.
 
 
 ## Exercise 2
@@ -391,7 +391,7 @@ summary(lm(oxidant~day, data=airpollution))$r.squared#0.01093407
 
 As said before, the most relevant variables for the linear model are (in order of importance): wind, temperature, insolation, humidity and day.
 
-Therefore, we will start with a linear model with wind as it's first explanatory variable, and we will add the variables that increase the determinant coefficient until it does not increase anymore (i.e. a step-up method).
+Therefore, we will start with a linear model with wind as it's first explanatory variable, and we will add the variables that increase the determinant coefficient until it does not increase anymore (i.e. a step-up method). NOTE: Although we are only displaying the $R^2$ in the first step, we did also check that the variable temperature was significant to the model.
 
 ```{r, collapse=TRUE}
 summary(lm(oxidant~wind+humidity, data=airpollution))$r.squared
@@ -422,7 +422,7 @@ Using a step-down process using the hypothesis $H_0:\beta_i=0$, we get that day,
 ###4.
 Final model:
 
-$-5.20334 - 0.42706*wind + 0.52035*temperature + error$
+$oxidant = -5.20334 - 0.42706*wind + 0.52035*temperature + error$
 
 ###5.
 ```{r}
