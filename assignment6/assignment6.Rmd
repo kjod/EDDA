@@ -9,10 +9,6 @@ output:
 highlight: tango
 fontsize: 11pt
 ---
-```{r}
-library(multcomp)
-library(lme4)
-```
 
 # Assignment 6
 
@@ -110,14 +106,6 @@ summary(galaglm)
 ###5.
 
 ```{r}
-print(error1)
-print(error2)
-```
-
-Full model(Q3)
-Step down model(Q4)
-
-```{r}
 par(mfrow=c(2,2))
 attach(africa_data)
 plot(fitted(galaglm),residuals(galaglm))
@@ -134,10 +122,25 @@ plot(log(fitted(galaglm)),residuals(galaglm,type="response"))
 #plot(1:36,cooks.distance(galaglm))
 print(residuals(galaglm))
 ```
-```{r}
-  
-```
+
 
 The response residuals clearly increase with the (logarithm) of the fitted values,
 as expected under a Poisson model.
-#compare r^2 scores
+
+Next, the model from Q3 will be investigated to see if it follows the same pattern.
+
+```{r}
+par(mfrow=c(1,3))
+plot(residuals(galaglm_full),parties)
+plot(log(fitted(galaglm_full)),residuals(galaglm_full))
+plot(log(fitted(galaglm_full)),residuals(galaglm_full,type="response"))
+print(residuals(galaglm_full))
+```
+
+While the response residuals clearly increase with the (logarithm) of the fitted values, the step down approach looks to contain less clear patterns in it's data. In the full model with all explanatory variables, there looks to be much clearer linear structures within the data compared to the step down model. This could be due to the removed variables. During the process of the step down approach in Q4 what can be seen is that some of the variables become less significant as variables are removed. For example, in the last step the variable pctvote is removed. This reduces the p value of the variable parties. By removing pctvote, the relationship between pctvote and parties is removed which will affect the model.
+
+```{r}
+pairs(pctvote~parties)
+```
+
+However, from the pairs graph there does not seem to be a correlation.
