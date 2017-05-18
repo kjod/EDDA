@@ -254,7 +254,7 @@ qqnorm(rpois(100, lambda = 15))
 qqnorm(rpois(1000, lambda = 15))
 ```
 
-What can be seen from question one is that as lambda and n increases, the poisson distribution better approximates a normal distribution. This is seen in the histograms in question 1 and is further backed up by the QQ plots. As the poisson distribution gets closer to approximating the normal distribution, the poisson distributions would be in the same location-scale family as they would have properties similar to a normal distribution.
+What can be seen from question one is that as lambda and n increases, the poisson distribution better approximates a normal distribution. This is seen in the histograms in question 1 and is further backed up by the QQ plots. As the poisson distribution gets closer to approximating the normal distribution, the poisson distributions would be in the same location-scale family as they would have properties similar to a normal distributions.
 
 ```{r}
 africa_data=read.table("africa.txt", header=TRUE)
