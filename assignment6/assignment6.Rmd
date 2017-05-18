@@ -54,7 +54,7 @@ Sexual activity seems to significantly influence longevity, with a p-value of 1.
 ```{r}
 confint(flieslm)
 ```
-
+The more sexual activity the less longetivity.
 In the Confidence Intervals for the different activities, this can be seen:
 Confidence Intervals for high activity:   [3.4796296, 3.7246190]
 Confidence Intervals for isolated - high: [0.3439909, 0.6904582]
@@ -121,6 +121,7 @@ We prefer the analysis with thorax, as it is more complete. Also, it is possible
 ### 9.
 
 ```{r}
+par(mfrow=c(1,2))
 qqnorm(residuals(flieslm2))
 plot(fitted(flieslm2),residuals(flieslm2))
 ```
@@ -128,6 +129,7 @@ plot(fitted(flieslm2),residuals(flieslm2))
 Normality is clearly met by the residuals, although heteroscedasticity is not that clear.
 
 ```{r}
+par(mfrow=c(1,2))
 flieslm3 = lm(longevity~thorax+activity, data=fruitflies)
 qqnorm(residuals(flieslm3))
 plot(fitted(flieslm3),residuals(flieslm3))
@@ -167,10 +169,8 @@ qqnorm(rpois(100, lambda = 15))
 qqnorm(rpois(1000, lambda = 15))
 ```
 
-What can be seen from question one is that as lambda and n increases, the poisson distribution further approximates a normal distribution. This is seen in the histgrams in question 1 and is further backed up by the QQ plots. As the poisson distribution gets closer to approximating the normal distribution, the Poisson distributions would be in the same location-scale family as they would have properties similar to a normal distribution.
+What can be seen from question one is that as lambda and n increases, the poisson distribution better approximates a normal distribution. This is seen in the histograms in question 1 and is further backed up by the QQ plots. As the poisson distribution gets closer to approximating the normal distribution, the poisson distributions would be in the same location-scale family as they would have properties similar to a normal distribution.
 
-
-#transform distrubution, see if it looks same afterwards
 ```{r}
 africa_data=read.table("africa.txt", header=TRUE)
 par(mfrow=c(3,2))
@@ -242,8 +242,6 @@ par(mfrow=c(1,3))
 plot(residuals(galaglm_full),parties)
 plot(log(fitted(galaglm)),residuals(galaglm))
 plot(log(fitted(galaglm)),residuals(galaglm,type="response"))
-#plot(1:36,cooks.distance(galaglm))
-print(residuals(galaglm))
 ```
 
 
@@ -257,10 +255,9 @@ par(mfrow=c(1,3))
 plot(residuals(galaglm_full),parties)
 plot(log(fitted(galaglm_full)),residuals(galaglm_full))
 plot(log(fitted(galaglm_full)),residuals(galaglm_full,type="response"))
-print(residuals(galaglm_full))
 ```
 
-While the response residuals clearly increase with the (logarithm) of the fitted values, the step down approach looks to contain less clear patterns in it's data. In the full model with all explanatory variables, there looks to be much clearer linear structures within the data compared to the step down model. This could be due to the removed variables. During the process of the step down approach in Q4 what can be seen is that some of the variables become less significant as variables are removed. For example, in the last step the variable pctvote is removed. This reduces the p value of the variable parties. By removing pctvote, the relationship between pctvote and parties is removed which will affect the model.
+While the response residuals clearly increase with the logarithm of the fitted values, the step down approach looks to contain less clear patterns in it's data. In the full model with all explanatory variables, there looks to be much clearer linear structures within the data compared to the step down model. This could be due to the removed variables. During the process of the step down approach in Q4 what can be seen is that some of the variables become less significant as variables are removed. For example, in the last step the variable pctvote is removed. This reduces the p-value of the variable parties. By removing pctvote, the relationship between pctvote and parties is removed which could affect the model if the is a dependency between these two variables.
 
 ```{r}
 pairs(pctvote~parties)
