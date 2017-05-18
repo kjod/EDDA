@@ -205,7 +205,7 @@ disadvantage: It does not take into account the amount of improvement found per 
 ## Exercise 3
 
 ### 1.
-For this exercise  
+ 
 ```{r}
 africa_data=read.table("africa.txt", header=TRUE)
 par(mfrow=c(2,2))
@@ -258,7 +258,7 @@ summary(galaglm_full)
 ```
 
 ### 4.
-Removing numelec has it had the gighest p-value.
+Removing numelec has it had the highest p-value.
 ```{r}
 
 #Analysisof variance
@@ -328,4 +328,4 @@ While the response residuals clearly increase with the logarithm of the fitted v
 pairs(pctvote~parties)
 ```
 
-However, from the pairs graph there does not seem to be a correlation.
+However, from the pairs graph there does not seem to be a strong correlation.
