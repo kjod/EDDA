@@ -28,6 +28,18 @@ exp(2.338)
 ###6.
 ### 15 is the number of student who did not receive psi and didn't showed improvement.
 ### 6 is the number of student who received psi and didn't show impovement.
-### The conclusion is 
+### The hypothesis tested by Fisher's exact test is if there is independence between the 2 factors (having psi and improving). This is rejected (p-value < 0.05) which proves that there is a dependence between them, and concluding that psi is more helpful to improve than the previous teaching method.
 x=matrix(c(3,15,8,6),2,2)
 fisher.test(x)
+
+###7.
+### It does not take into account the amount of improvement found per student, but besides that it is a correct experiment.
+
+###8.
+### 1st:
+### advantage:
+### disadvantage:
+###
+### 2nd:
+### advantage: 
+### disadvantage: It does not take into account the amount of improvement found per student

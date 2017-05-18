@@ -9,8 +9,134 @@ output:
 highlight: tango
 fontsize: 11pt
 ---
+<<<<<<< HEAD
+=======
 
 # Assignment 6
+
+## Exercise 1
+```{r}
+fruitflies=read.table('fruitflies.txt', header=TRUE)
+fruitflies$loglongevity <- log(fruitflies$longevity)
+```
+>>>>>>> 791d92bec77554e1e48dec62e791b76cb2eac7c4
+
+### 2.
+```{r}
+plot(loglongevity~thorax, pch=as.character(activity), col=as.numeric(activity), data=fruitflies)
+abline(lm(loglongevity~thorax, data=fruitflies), col="blue")
+```
+
+In the plot above, longevity seems to increase with torax.
+
+```{r}
+# per activity:
+boxplot(fruitflies$loglongevity~fruitflies$activity)
+```
+
+In these boxplots, it can be seen how high activity has a significantly low longevity than low and isolated activity. Those two last activities remain in similar longevity values.
+
+```{r}
+# thorax per activity (is there a significant difference between them?)
+boxplot(fruitflies$thorax~fruitflies$activity)
+```
+
+Lastly, we plot activity with respect to thorax, to see if thorax lengths are equally distributed along the activity groups. This is important, as if one group was full of bigger thorax fruitflies, this could affect the result of the experiment. The activity groups are seen to actually have similar thorax values.
+
+### 3.
+
+```{r}
+flieslm = lm(loglongevity~activity, data=fruitflies)
+anova(flieslm)
+```
+
+Sexual activity seems to significantly influence longevity, with a p-value of 1.798e-07.
+
+### 4.
+
+```{r}
+confint(flieslm)
+```
+
+In the Confidence Intervals for the different activities, this can be seen:
+Confidence Intervals for high activity:   [3.4796296, 3.7246190]
+Confidence Intervals for isolated - high: [0.3439909, 0.6904582]
+Confidence Intervals for low - high:      [0.2244780, 0.5709453]
+Therefore, high has the lowest longevity, and isolated the highest (isolated > low > high).
+
+### 5.
+
+```{r}
+flieslm2 = lm(loglongevity~thorax+activity, data=fruitflies)
+anova(flieslm2)
+```
+```{r}
+drop1(flieslm2,test="F")
+```
+
+After testing it (both with anova and drop1, we get very similar results on both) we can conclude that both factors (thorax and activity) have a significant influence on the longevity.
+
+### 6.
+
+```{r}
+summary(flieslm2)
+```
+
+As said before, the more sexual activity, the lowest longevity. Therefore, sexual activity influences negatively longevity (Isolated > Low > High).
+final model: 1.21893 + 2.97899*thorax + 0.40998 (isolated)
+                                      + 0.28570 (low)
+                                      - 0.69568 (high)
+
+For a fly with an average thorax:
+```{r}
+mean(fruitflies$thorax)
+###    loglongevity_isolated= 1.21893 + 2.97899*0.8245333 + 0.40998 = 4.085186
+1.21893 + 2.97899*mean(fruitflies$thorax) + 0.40998
+###    loglongevity_low     = 1.21893 + 2.97899*0.8245333 + 0.28570 = 3.960906
+1.21893 + 2.97899*mean(fruitflies$thorax) + 0.28570
+###    loglongevity_high    = 1.21893 + 2.97899*0.8245333 - 0.69568 = 2.979526
+1.21893 + 2.97899*mean(fruitflies$thorax) - 0.69568
+```
+```{r}
+min(fruitflies$thorax)
+###    loglongevity_isolated= 1.21893 + 2.97899*0.64 + 0.40998 = 3.535464
+1.21893 + 2.97899*min(fruitflies$thorax) + 0.40998
+###    loglongevity_low     = 1.21893 + 2.97899*0.64 + 0.28570 = 3.411184
+1.21893 + 2.97899*min(fruitflies$thorax) + 0.28570
+###    loglongevity_high    = 1.21893 + 2.97899*0.64 - 0.69568 = 2.429804
+1.21893 + 2.97899*min(fruitflies$thorax) - 0.69568
+```
+
+### 7.
+
+```{r}
+plot(loglongevity~thorax, pch=unclass(activity), col=as.numeric(activity), data=fruitflies)
+for (i in 1:3) abline(lm(loglongevity~thorax, data=fruitflies[as.numeric(fruitflies$activity)==i,]), col=i)
+legend("bottomright", legend=levels(fruitflies$activity), col=c(1,2,3), lty=1, cex=0.5)
+```
+
+Lines have similar slope, which denotes that thorax influences similarly between activities.
+
+### 8.
+
+We prefer the analysis with thorax, as it is more complete. Also, it is possible to detect if there could be a difference in longevity between groups because of flies with significantly different thorax, instead of sexual activity. The analysis are fine, both factors do influence longevity.
+
+### 9.
+
+```{r}
+qqnorm(residuals(flieslm2))
+plot(fitted(flieslm2),residuals(flieslm2))
+```
+
+Normality is clearly met by the residuals, although heteroscedasticity is not that clear.
+
+```{r}
+flieslm3 = lm(longevity~thorax+activity, data=fruitflies)
+qqnorm(residuals(flieslm3))
+plot(fitted(flieslm3),residuals(flieslm3))
+```
+
+In this case heteroscedasticity seems more clear, which may mean that taking the logarithm of longevity was not a good decition.
 
 ## Exercise 3
 
