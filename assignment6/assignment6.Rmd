@@ -148,7 +148,7 @@ psi=read.table('psi.txt', header=TRUE)
 boxplot(psi$gpa~psi$psi)
 ```
 
-In this boxplot of average gpa based on whether the student was instructed using psi or not, it can be seen that the ones with psi have a slightly better gpa, although the plot also shows the existence of some outliers.
+In this boxplot of gpa which is based on whether the student was instructed using psi or not, it can be seen that the ones with psi have a slightly better gpa, although the plot also shows the existence of some outliers.
 
 ```{r}
 boxplot(psi$gpa~psi$passed)
