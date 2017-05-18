@@ -1,0 +1,472 @@
+---
+title: "Assignment 4 & 5, EDDA 2017"
+author: "Martin de la Riva(11403799) and Kieran O'Driscoll(11426438), Group 23"
+date: "08 May 2017"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+highlight: tango
+fontsize: 11pt
+---
+```{r}
+library(multcomp)
+library(lme4)
+```
+
+# Assignment 6
+
+## Exercise 3
+
+### 1.
+For this exercise  
+```{r}
+africa_data=read.table("data\\africa.txt", header=TRUE)
+```
+
+### 2.
+
+
+```{r}
+par(mfrow=c(2,2))
+boxplot(hours~environment,data=bread_data, main="Plot of hours and environment", 
+  	xlab="Environment", ylab="Hours")
+boxplot(hours~humidity,data=bread_data, main="Plot of hours and humidity", 
+  	xlab="Humidity", ylab="Hours")
+attach(bread_data)
+
+interaction.plot(environment, humidity, hours)
+interaction.plot(humidity, environment, hours)
+```
+
+
+### 3
+
+```{r}
+#Analysisof variance
+#2 way alnova
+bread_data$environment=as.factor(bread_data$environment)
+bread_data$humidity=as.factor(bread_data$humidity)
+pvcaov=lm(hours~environment*humidity,data=bread_data)
+print(anova(pvcaov))
+```
+Neither the effects of the humidity or environment are significantly different from 0 as they have really low p-values. This falls under the 0.05 range meaning that they have an effect. The interaction also falls below 0.05 meaning there is evidence that the two are not independent and that their interaction has an effect.
+
+### 4.
+
+```{r}
+contrasts(bread_data$environment)=contr.sum
+contrasts(bread_data$humidity)=contr.sum
+pvcaov2=lm(hours~environment*humidity, data=bread_data)
+print(summary(pvcaov2))
+```
+Out of the two factors, environment has the greatest influence on the
+decay. This can be seen in by looking at the p values for the environment above and by analysing the box plots and interaction graphs earlier. The box plot inparticular show a clear difference between the types of environment and the result in the deacay with cold environments taking much longer for decay. However this is not a good question as from ealier analysis and by taking a look at the interaction graph it clear the the environment and humidity have an effect on each other. Therefore to it is hard to say which factor has the biggest effect as each factor is being influenced by the other. 
+
+```{r}
+  #print(confint(pvcaov2)) #not sure if needed
+```
+
+
+###5.
+
+```{r}
+  qqnorm(residuals(pvcaov2))
+```
+From the qplot it does not seem to be a normal distrubution so the data probably contains some outliers.
+```{r}
+print(residuals(pvcaov2)) # look for residuals that are outside std
+```
+The residuals for the model could indicate some potential outliers. The extreme values for 7 and 8 could be two outliers.
+
+```{r}
+round(cooks.distance(pvcaov2),2)
+```
+
+```{r}
+plot(1:18,cooks.distance(pvcaov2))
+```
+Looking at cooks distance confirms suspicion that 7 and 8 are outliers.
+
+```{r}
+  par(mfrow=c(1,2))
+  plot(fitted(pvcaov2),residuals(pvcaov2))
+  #plot(fitted(pvcaov),residuals(pvcaov))
+  bread_data2 = bread_data[append(append(c(1:5), c(9:16)), c(17:18)),]
+  pvcaov=lm(hours~environment*humidity,data=bread_data2)
+
+  plot(fitted(pvcaov),residuals(pvcaov))
+
+  #print(anova(pvcaov))
+  #cooks.distance(pvcaov2)
+  #plot point on graph with cooks distance and levenes distance
+  #library(car)  influencePlot(pvcaov2)
+```
+
+```{r}
+ #par(mfrow=c(1,2))
+ #qqnorm(residuals(pvcaov2))
+ qqnorm(residuals(pvcaov))
+```
+By removing the two outliers, a qq-plot that better resembles a normal distribution is displayed.
+
+
+## Exercise 2
+
+
+### 1.
+
+```{r}
+I=3; B=5; N=15 # 15 students
+for (i in 1:B) print(sample(1:(N*I)))
+
+```
+
+### 2.
+
+```{r}
+search_data=read.table("data\\search.txt", header=TRUE)
+par(mfrow=c(2,2))
+boxplot(time~skill,data=search_data, main="Plot of time and skill", 
+  	xlab="Skill", ylab="Time")
+boxplot(time~interface,data=search_data, main="Plot of time and interface", 
+  	xlab="Interface", ylab="Time")
+attach(search_data)
+interaction.plot(skill, interface, time)
+interaction.plot(interface, skill, time)
+
+```
+As expected, the increase in skill level(in this case the skill variable descends to indicate a better skill level) the increase in the time spent. What can be seen is that the skill levels are generally consistent across the interfaces with more skilled individuals generally quicker. Most users are quicker in interface 1 while certain skill levels are better on particular interfaces such as interface 2 and skill level 2. This could be an anomaly due to the small sample size.
+
+### 3.
+
+```{r}
+search_data=read.table("data\\search.txt", header=TRUE)#need for reset 
+search_data['skill'] = search_data$skill=as.factor(search_data$skill)
+search_data['interface'] = search_data$interface=as.factor(search_data$interface)
+
+#temp_data = search_data
+#temp_data['interface'] = paste("interface", temp_data['interface']) #change to category
+#new_data = xtabs(time~interface+skill,data=search_data)
+
+aovpen=lm(time~interface+skill,data=search_data)
+print(anova(aovpen))
+print(summary(aovpen))
+
+```
+
+The p-value for the null hypothesis for all interfaces is 0.01310. This falls below the level of 0.05 and therefore the null hypothesis can be rejected. Therefore the search time for all interfaces is different.  
+
+### 4.
+This can be estimated using the interaction graphs. By looking at skill level 4 and interface 3 on the interaction graph, the mean time can be estimated to be 22.5.
+
+```{r}
+par(mfrow=c(1,2))
+attach(search_data)
+interaction.plot(skill,interface,time)#draw line on graph
+interaction.plot(interface,skill,time) 
+
+```
+
+###5.
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(residuals(aovpen))
+plot(fitted(aovpen),residuals(aovpen))
+
+```
+The data looks like it is distrubuted normally with the exception the top right values and the bottom ones. However by analysing the scatter there does not seem to be any outliers. To check this futher, cooks distance will be used.
+```{r}
+round(cooks.distance(aovpen),2)
+```
+
+```{r}
+plot(1:15,cooks.distance(aovpen))
+```
+There is potentially two outliers, 14 and 6. 
+
+```{r}
+  search_data2 = search_data[append(append(c(1:5), c(7:13)), c(15:15)),]
+  aovpen2=lm(time~interface+skill,data=search_data)
+  qqnorm(residuals(aovpen2))
+```
+By removing the outliers the q-plot looks more like a normal distribution.
+
+
+###6.
+
+```{r}
+friedman.test(time,interface,skill)
+```
+
+The p-value is 0.04076 is below 0.05 confidence level so the null hull hypothesis can be rejected. Therefore there is an effect on the interface.  
+
+###7.
+
+```{r}
+aovpen=lm(time~interface,data=search_data)
+print(anova(aovpen))
+print(summary(aovpen))
+```
+The p value is 0.09642 which means the null hypothesis cannot be rejected. This is not a good test to perform beacuse by ignoring the skill variable you cannot the check the effect of the interface with respect to the skill levels. It might be the case that certain skill levels perform better on different interfaces.
+
+For this one way analysis to occur each sample should be an independent random sample, the distrubution of the target variable folows the normal distribution and that the variances  in the population are equal across target values for each group level.
+
+The sample of students can be presummed to be chosen at random from a normal population. The variance is balanced and the assumption of normaility is proven by the q-plot of the residuals.
+
+###Excercise 3
+
+###1
+
+```{r}
+cream_data=read.table("data\\cream.txt", header=TRUE)
+cream_data$position = factor(cream_data$position)
+cream_data$batch = factor(cream_data$batch)
+cream_data$starter = factor(cream_data$starter)
+model = lm(acidity~starter+batch+position, data=cream_data)
+print(model)
+print(summary(model))
+```
+From the model we can see starter 4 given a high coefficient along with batch 4. By taking the summary of the model we can gather that starter 4 has the biggest effect while batch 2 and 4 have a smaller effect. The position variable does not seem to have any significant effect.
+
+###2.
+```{r}
+pvcmult=glht(model,linfct=mcp(starter="Tukey"))
+summary(pvcmult)
+```
+
+The combined starters with p-value less than 0.05 lead to significantly different acidity. These includes the pairs (4,1),(4,2),(4,3) and (5,4).
+
+###3.
+
+In that first summary, the hypothesis $H_0:\alpha_2=\alpha_1$ are for the effects in starter, while in the comparison test between starter, it's for the main effect in the $j$th starter. It is no coincidence, as in the first summary only one comparison is done where as in the simultaneous p-value, checks are done with regards to each of the other starters.
+
+
+##4.
+
+```{r}
+confint(pvcmult)
+```
+
+The pairs that do not contain 0 are (4,1),(4,2),(4,3) and (5,4), which are exactly the ones with p-value < 0.05. In 95% of all experiments those 4 intervals will cover the true difference.
+###Excercise 4
+
+###1.
+```{r}
+cow_data=read.table("data\\cow.txt", header=TRUE)
+cow_data$id=factor(cow_data$id)
+cow_data$per=factor(cow_data$per)
+model=lm(milk~treatment+per+id,data=cow_data)
+summary(model)
+```
+There is no significant effect in the treatment but there is an effect in the period.
+
+###2.
+It is estimated you would get -0.51 less milk production, although it has a p-value of 0.51, denoting it does not have a significant difference.
+
+
+###3.
+
+```{r}
+mixed_model=lmer(milk~treatment+order+per+(1|id),data=cow_data,REML=FALSE)
+print(summary(mixed_model))
+
+```
+It is estimated you would get -0.51 less milk production which is the same as the fixed results model. There is an estimated variance of 133.145 of the normal population of the "individual effects". 
+
+```{r}
+mixed_model2=lmer(milk~order+per+(1|id),data=cow_data,REML=FALSE)
+anova(mixed_model2,mixed_model)
+
+```
+
+The results are the same with no significat difference in the treatmen.t
+
+###4.
+
+```{r}
+attach(cow_data)
+t.test(milk[treatment=="A"],milk[treatment=="B"],paired=TRUE)
+```
+
+```{r}
+par(mfrow=c(1,2))
+hist(milk[treatment=="A"])
+hist(milk[treatment=="B"])
+```
+
+The distribution of treatment a does not look to have been drawn from a normal distribution but this could be due to a lack of data. If one of the populations from A or B are not drawn from a  normal distribution then the paired t-test should not be used.
+
+The paired t-test does not take into the account the order in which the treatment was applied or the period is was applied in. The p-value does not reject the null hypothesis which is the same conclusion as the fixed effects model. However the fixed effects model is a much better test as it analyses the treatements and the periods along with the id of each cow. In the fixed effects model it is implied that the cow itself has a big effect if a treatment works or not. 
+
+
+# Assignment 5
+
+## Exercise 1
+
+###1.
+
+```{r}
+nauseatable=read.table('data\\nauseatable.txt', header=TRUE)
+
+nausea=c()
+medicin=c()
+for(i in 1:nrow(nauseatable)){
+  for(j in 1:ncol(nauseatable)){
+    medicin=append(medicin, rep(row.names(nauseatable)[i], nauseatable[i,j]))
+    nausea=append(nausea, rep(j-1, nauseatable[i,j]))
+  }
+}
+
+nausea.frame=data.frame(nausea,medicin)
+#print(nausea.frame)
+
+```
+
+With this code, an appropiate data frame is created from any table of the same characteristics.
+
+###2.
+```{r, collapse=TRUE}
+nauseatable
+xtabs(~medicin+nausea)
+```
+
+We can see that the xtabs code makes a table out of a data frame of 2 vectors. With this outcome we can confirm that the transformation of the data.frame is correct.
+
+###3.
+```{r}
+attach(nausea.frame)
+B=1000
+tstar=pstar=numeric(B)
+for (i in 1:B){
+    nausstar=sample(nausea) ## permuting the labels
+    tstar[i]=chisq.test(xtabs(~medicin+nausstar))[[1]]
+}
+myt=chisq.test(xtabs(~medicin+nausea))[[1]]
+hist(tstar)
+pl=sum(tstar<myt)/B
+pr=sum(tstar>myt)/B
+pr
+```
+
+Having as $H_0$=The different medicins work equally well against nausea.
+
+Really low chi-square values are registered (mostly less than 2) when permuting the labels. We get a (bootstrap fashion) p-value of around $0.042$. Therefore, we can reject the hypothesis. In other words, the different medicins work differently against nausea.
+
+###4.
+```{r}
+chisq.test(xtabs(~medicin+nausea))[[3]]
+```
+
+Chi-Square test returns a really similar value as the one in the permutation test.
+
+## Exercise 2
+
+###1.
+```{r}
+airpollution=read.table('data\\airpollution.txt', header=TRUE)
+pairs(airpollution)
+```
+
+There seems to be clear relation between oxidant with temperature, insolation and wind. There also seems to be related with humidity and day (although not that clear). A linear model looks useful for this data.
+
+###2.
+```{r, collapse=TRUE}
+summary(lm(oxidant~insolation, data=airpollution))$r.squared#0.2551683
+summary(lm(oxidant~humidity, data=airpollution))$r.squared#0.12402
+summary(lm(oxidant~temperature, data=airpollution))$r.squared#0.5760164
+summary(lm(oxidant~wind, data=airpollution))$r.squared#0.5863157
+summary(lm(oxidant~day, data=airpollution))$r.squared#0.01093407
+```
+
+As said before, the most relevant variables for the linear model are (in order of importance): wind, temperature, insolation, humidity and day.
+
+Therefore, we will start with a linear model with wind as it's first explanatory variable, and we will add the variables that increase the determinant coefficient until it does not increase anymore (i.e. a step-up method). NOTE: Although we are only displaying the $R^2$ in the first step, we did also check that the variable temperature was significant to the model.
+
+```{r, collapse=TRUE}
+summary(lm(oxidant~wind+humidity, data=airpollution))$r.squared
+summary(lm(oxidant~wind+insolation, data=airpollution))$r.squared
+summary(lm(oxidant~wind+day, data=airpollution))$r.squared
+summary(lm(oxidant~wind+temperature, data=airpollution))$r.squared
+# therefore we add temperature
+summary(lm(oxidant~wind+temperature+humidity, data=airpollution))
+summary(lm(oxidant~wind+temperature+insolation, data=airpollution))
+summary(lm(oxidant~wind+temperature+day, data=airpollution))
+# Adding none of the variables yields significance. Therefore we stop at the previous model.
+```
+
+Looking at the $R^2$, it increases when adding more variables, although insignificantly when having added the most relevant ones. Investigating the summary and the p-value (using hypothesis $H_0:\beta_i=0$) using the full linear model, we can see that insolation, humidity and day do not apport much information.
+
+From those 3 variables, humidity seems to be the most relevant one, reaching a p-value of 0.131  when having a wind+temperature+humidity model. Besides this, the p-value is above 0.05 and the increase in $R^2$ is still not significant. Therefore, we do not add any more variables to the model, finishing with a oxidant~wind+temperature model.
+
+###3.
+```{r, collapse=TRUE}
+summary(lm(oxidant~wind+temperature+insolation+humidity+day, data=airpollution))
+summary(lm(oxidant~wind+temperature+insolation+humidity, data=airpollution))
+summary(lm(oxidant~wind+temperature+humidity, data=airpollution))
+summary(lm(oxidant~wind+temperature, data=airpollution))
+```
+
+Using a step-down process using the hypothesis $H_0:\beta_i=0$, we get that day, insolation and humidity get extracted from the model. This is as all of them have a p-value higher than 0.05 on every step, as it can be seen above. This leaves a linear model with wind+temperature.
+
+###4.
+Final model:
+
+$oxidant = -5.20334 - 0.42706*wind + 0.52035*temperature + error$
+
+###5.
+```{r}
+lm1 = summary(lm(oxidant~wind+temperature, data=airpollution))
+qqnorm(residuals(lm1))
+shapiro.test(residuals(lm1))
+```
+
+The normality assumption of the residuals seems correct, and it therefore seems like a correct model.
+
+##Exercise 3
+
+###Finding a model
+
+```{r, collapse=TRUE}
+expensescrime=read.table('data\\expensescrime.txt', header=TRUE)
+
+### step-down model
+summary(lm(expend~employ+lawyers+pop+bad+crime, data=expensescrime))
+# delete crime
+summary(lm(expend~employ+lawyers+pop+bad, data=expensescrime))
+# delete pop
+summary(lm(expend~employ+lawyers+bad, data=expensescrime))
+# delete bad
+summary(lm(expend~employ+lawyers, data=expensescrime))
+# done
+```
+
+Using a step-down approach to choose the variables of the linear model, we end up with expend~employ+lawyers. Step-up approach was also tested, leading to the same result.
+
+###Influence points
+```{r}
+lm2 = lm(expend~employ+lawyers, data=expensescrime)
+round(cooks.distance(lm2),2)
+plot(1:51, cooks.distance(lm2))
+```
+
+It can be clearly seen that the model has 2 influence points: point 5 and 8, with Cook's distances 5.47 and 6.38 respectively.
+
+###Collinearity
+```{r}
+pairs(lawyers~employ, data=expensescrime)
+```
+
+Graphically, a clear collinearity between the variables lawyers and employ can be seen.
+
+```{r}
+round(cor(expensescrime[,5:6]),2)
+```
+
+Numerically we confirm their collinearity (0.97). Therefore, we should remove one of the variables. Checking the models with both variables, we can decide to keep employ, as it has a higher determination coefficient. We end with a model of the form expend~employ.
+
+```{r}
+summary(lm(expend~lawyers, data=expensescrime))
+summary(lm(expend~employ, data=expensescrime))
+```

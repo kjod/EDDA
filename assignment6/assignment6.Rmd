@@ -1,0 +1,108 @@
+---
+title: "Assignment 4 & 5, EDDA 2017"
+author: "Martin de la Riva(11403799) and Kieran O'Driscoll(11426438), Group 23"
+date: "08 May 2017"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+highlight: tango
+fontsize: 11pt
+---
+```{r}
+library(multcomp)
+library(lme4)
+```
+
+# Assignment 6
+
+## Exercise 3
+
+### 1.
+For this exercise  
+```{r}
+africa_data=read.table("africa.txt", header=TRUE)
+par(mfrow=c(3,2))
+hist(rpois(100, lambda = 1))
+hist(rpois(100, lambda = 5))
+hist(rpois(100, lambda = 10))
+hist(rpois(100, lambda = 15))
+hist(rpois(100, lambda = 20))
+hist(rpois(100, lambda = 25))
+
+```
+
+### 2.
+
+
+```{r}
+#transform distrubution, see if it looks same afterwards
+
+```
+
+
+### 3
+
+```{r}
+#Analysisof variance
+galaglm_full=glm(miltcoup~oligarchy+pollib+parties+pctvote+popn+size+numelec +numregim,family=poisson,data=africa_data)
+summary(galaglm_full)
+```
+
+### 4.
+Removing numelec has it had the gighest p-value.
+```{r}
+
+#Analysisof variance
+galaglm=glm(miltcoup~oligarchy+pollib+parties+pctvote+popn+size +numregim,family=poisson,data=africa_data)
+summary(galaglm)
+```
+Removing numregim.
+
+```{r}
+galaglm=glm(miltcoup~oligarchy+pollib+parties+pctvote+popn+size,family=poisson,data=africa_data)
+summary(galaglm)
+```
+Removing size.
+
+```{r}
+galaglm=glm(miltcoup~oligarchy+pollib+parties+pctvote+popn,family=poisson,data=africa_data)
+summary(galaglm)
+```
+Removing popn.
+
+```{r}
+galaglm=glm(miltcoup~oligarchy+pollib+parties+pctvote,family=poisson,data=africa_data)
+summary(galaglm)
+```
+And finally removing pctvote.
+
+```{r}
+galaglm=glm(miltcoup~oligarchy+pollib+parties,family=poisson,data=africa_data)
+summary(galaglm)
+```
+
+
+###5.
+
+```{r}
+par(mfrow=c(2,2))
+attach(africa_data)
+plot(fitted(galaglm),residuals(galaglm))
+plot(residuals(galaglm),parties)
+plot(residuals(galaglm),pollib)
+plot(residuals(galaglm),oligarchy)
+```
+
+See an outlier in parties. Checking for the same outlier in full model.
+
+```{r}
+par(mfrow=c(1,2))
+plot(residuals(galaglm_full),parties)
+plot(1:36,cooks.distance(galaglm))
+print(residuals(galaglm))
+```
+Remove this o
+
+
+#compare r^2 scores
