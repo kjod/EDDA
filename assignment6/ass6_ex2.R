@@ -1,6 +1,9 @@
 psi=read.table('psi.txt', header=TRUE)
 
 ###1.
+boxplot(psi$gpa~psi$psi)
+boxplot(psi$gpa~psi$passed)
+xtabs(~passed+psi,data=psi)*100/sum(xtabs(~passed+psi,data=psi))
 
 ###2. Fit a logistic regression model with both explanatory variables.
 psi$psi=factor(psi$psi)

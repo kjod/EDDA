@@ -141,6 +141,26 @@ In this case heteroscedasticity seems more clear, which may mean that taking the
 psi=read.table('psi.txt', header=TRUE)
 ```
 
+### 1.
+```{r}
+boxplot(psi$gpa~psi$psi)
+```
+
+In this boxplot of average gpa based on whether the student was instructed using psi or not, it can be seen that the ones with psi have a slightly better gpa, although the plot also shows the existence of some outliers.
+
+```{r}
+boxplot(psi$gpa~psi$passed)
+```
+
+In this plot, we took the same approach as before but having whether the student passed or not. As expected, the students that passed have a significantly higher gpa.
+
+```{r}
+xtabs(~passed+psi,data=psi)
+```
+
+In this table we can see the relation between students that passed/not passed and students that had psi or not. It can be clearly seen how there are relatively more people that had psi and passed, than those studying traditionally that passed.
+
+
 ### 2.
 
 ```{r}
