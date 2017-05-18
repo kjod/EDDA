@@ -9,8 +9,6 @@ output:
 highlight: tango
 fontsize: 11pt
 ---
-<<<<<<< HEAD
-=======
 
 # Assignment 6
 
@@ -19,7 +17,6 @@ fontsize: 11pt
 fruitflies=read.table('fruitflies.txt', header=TRUE)
 fruitflies$loglongevity <- log(fruitflies$longevity)
 ```
->>>>>>> 791d92bec77554e1e48dec62e791b76cb2eac7c4
 
 ### 2.
 ```{r}
