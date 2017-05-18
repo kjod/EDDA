@@ -28,5 +28,6 @@ exp(2.338)
 ###6.
 ### 15 is the number of student who did not receive psi and didn't showed improvement.
 ### 6 is the number of student who received psi and didn't show impovement.
+### The conclusion is 
 x=matrix(c(3,15,8,6),2,2)
 fisher.test(x)
