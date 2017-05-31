@@ -37,7 +37,6 @@ airline=read.csv("data/airline_data.csv", header=TRUE)
 ```{r}
 temp = as.Date(airline$Date,'%m/%d/%Y')
 airline['Date'] = format(temp,'%Y')
-
 print(head(airline))
 ```
 
@@ -45,9 +44,25 @@ Given columns
 
 ```{r}
 ### Analysis of data
-par(mfrow=c(1,3))
-boxplot(airline$incidents_85_99, airline$incidents_00_14)
-boxplot(airline$fatal_accidents_85_99, airline$fatal_accidents_00_14)
-boxplot(airline$fatalities_85_99, airline$fatalities_00_14)
+setup_data <- function(date, range, data) {
+    airlines = unique(data$Operator[data$Date == date])
+    before = rep(0, length(airlines))
+    after = rep(0, length(airlines))
+    lower_bound = date - 4
+    upper_bound = date + 5
+    
+    df <- data.frame(airlines, before, after)
+    for(i in seq(from=1, to=length(airlines), by=1)){
+      df$before[i] = sum(data$Fatalities[data$Date => lower_bound & data$Date <= date & 
+                                       data$Operator == df$airlines[i]])
+      df$after[i] = sum(data$Fatalities[data$Date <= upper_bound & data$Date > date & 
+                                       data$Operator == df$airlines[i]])
+      #append(x, values, after=length(x))
+    }
+
+    #statements
+    #return(something)
+    return(df)
+}
 
 ```
