@@ -48,8 +48,8 @@ setup_data <- function(date, range, data) {
     airlines = unique(data$Operator)
     before = rep(0, length(airlines))
     after = rep(0, length(airlines))
-    lower_bound = date - 4
-    upper_bound = date + 5
+    lower_bound = date - range - 1
+    upper_bound = date + range
     
     df <- data.frame(airlines, before, after)
     for(i in seq(from=1, to=length(airlines), by=1)){
