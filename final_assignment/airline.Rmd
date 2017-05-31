@@ -1,0 +1,48 @@
+---
+title: "Final Project, EDDA 2017"
+author: "Martin de la Riva(11403799) and Kieran O'Driscoll(11426438), Group 23"
+date: "01 June 2017"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+highlight: tango
+fontsize: 11pt
+---
+
+#Introduction
+%Reserach questions
+%Why is it important
+%Whats is in the data
+
+Air travel is increased by blah% in 2016 [reference] in the USA. Passenger Airlines that have a crash get an negative associtaion of not being safe. The first question the would be interesting it to check to see if an airline gets safer after a crash or incident? it is expecte dthat each crash has a impact on the Airline's stock market valuation as these valuations hugely rely on confidence. The question here is to see how much of an effect does a crash or an incident have on an airlines stock market evaluation.
+
+
+
+  #provide refernece
+  
+#Data Distrubution
+
+#Data findings
+
+#Setting up experiment
+
+
+```{r}
+airline=read.csv("airline-safety.csv", header=TRUE)
+```
+
+```{r}
+print(head(airline))
+```
+
+Given columns
+
+```{r}
+### Analysis of data
+par(mfrow=c(1,3))
+boxplot(airline$incidents_85_99, airline$incidents_00_14)
+boxplot(airline$fatal_accidents_85_99, airline$fatal_accidents_00_14)
+boxplot(airline$fatalities_85_99, airline$fatalities_00_14)
+
+```
