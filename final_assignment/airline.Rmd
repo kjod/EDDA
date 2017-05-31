@@ -45,7 +45,7 @@ Given columns
 ```{r}
 ### Analysis of data
 setup_data <- function(date, range, data) {
-    airlines = unique(data$Operator[data$Date == date])
+    airlines = unique(data$Operator)
     before = rep(0, length(airlines))
     after = rep(0, length(airlines))
     lower_bound = date - 4
@@ -53,7 +53,7 @@ setup_data <- function(date, range, data) {
     
     df <- data.frame(airlines, before, after)
     for(i in seq(from=1, to=length(airlines), by=1)){
-      df$before[i] = sum(data$Fatalities[data$Date => lower_bound & data$Date <= date & 
+      df$before[i] = sum(data$Fatalities[data$Date >= lower_bound & data$Date <= date & 
                                        data$Operator == df$airlines[i]])
       df$after[i] = sum(data$Fatalities[data$Date <= upper_bound & data$Date > date & 
                                        data$Operator == df$airlines[i]])
