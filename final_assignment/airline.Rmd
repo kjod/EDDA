@@ -17,52 +17,57 @@ fontsize: 11pt
 
 %Is a place a 
 
-Air travel is increased by blah% in 2016 [reference] in the USA. However, what is relevant or significant when a crash occurs. In this paper this topic will be discussed. The first question that would be interesting is to check to see if the location of the crash matters. If a plane crashes more in a certain location this could  indicate a place where weather conditions are more hazardous, perhaps this was an era of conflict during that period of time or maybe its a popular air travel location. Also it would be of interest to see if the choice of Manfacturer has an impact on the number of fatalities.
+Air travel is increased by blah% in 2016 [reference] in the USA. However, what is relevant or significant when a crash occurs. In this paper this topic will be discussed. The first question that would be interesting is to check to see if a plane that crashes is more likely to crash in a periods after ther the crash. Also additional intresting questions to consinder are if the location of the crash is signicant and if the choice of plane manufacturer has an impact on the number of fatalities.
+
+#provide refernece
+The datasets used to check this will be drawn from two sources. The first source is taken from the github repository of "fivethirtyeight" which contain airline saftey statistics. The second is drawn from the opendata.socrata site.
+
+%https://github.com/fivethirtyeight/data/blob/master/airline-safety/airline-safety.csv
+%https://opendata.socrata.com/Government/Airplane-Crashes-and-Fatalities-Since-1908/q2te-8cvq
+
+```{r}
+airlines_data = read.csv("data/airline_data.csv", header=TRUE)
+```
 
 
+```{r}
 
-  #provide refernece
-  
+```
 #Data Distrubution
+%for first data set
 
 #Data findings
 
+#Data Cleaning
+Due to teh format of some of the data, The column "Date" needs to be cleaned as the data is agg
+```{r}
+airlines_selection_data = airlines_data[airlines_data$Classification == "Non Military"]
+temp = as.Date(airlines_selection_data$Date,'%m/%d/%Y')
+airlines_selection_data['Date'] = format(temp,'%Y')
+```
+
 #Setting up experiment
-
-
+To set up the experiment, a function was created to give data in the format where before and after columns could be created and used to test the research question. The function is given below:
 ```{r}
-airline=read.csv("data/airline_data.csv", header=TRUE)
-```
-
-```{r}
-temp = as.Date(airline$Date,'%m/%d/%Y')
-airline['Date'] = format(temp,'%Y')
-print(head(airline))
-```
-
-Given columns
-
-```{r}
-### Analysis of data
 setup_data <- function(date, range, data) {
-    airlines = unique(data$Operator)
+    airlines = unique(data$Operator[data$Date == date])#remove filter to include airlines that didn't crash
     before = rep(0, length(airlines))
     after = rep(0, length(airlines))
     lower_bound = date - range - 1
     upper_bound = date + range
-    
     df <- data.frame(airlines, before, after)
     for(i in seq(from=1, to=length(airlines), by=1)){
       df$before[i] = sum(data$Fatalities[data$Date >= lower_bound & data$Date <= date & 
                                        data$Operator == df$airlines[i]])
       df$after[i] = sum(data$Fatalities[data$Date <= upper_bound & data$Date > date & 
                                        data$Operator == df$airlines[i]])
-      #append(x, values, after=length(x))
     }
-
-    #statements
-    #return(something)
     return(df)
 }
+```
+This function is created to aggregate the data for a year. This gives for each airline a before and after figure. This function is fed a year and range. The range selects the range plus and minus around the year given. The aim is to provide a data set where it can be determined if a plane crashes(the before column) are they more likely to crash in the near future(the after column). Serveal dates are used 1965, 1975, 1985 , 1995 and 2004. The range used will be 5 years.
+
+```{r}
+aggregate_data = setup_data(1965, 5, airlines_selection_data)
 
 ```
