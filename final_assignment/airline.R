@@ -28,10 +28,11 @@ permutation_test = function(mystat, col1, col2){
     tstar[i]=mystat(temp[,1],temp[,2])
   }
   myt=mystat(col1,col2)
+  print(myt)
   pl=sum(tstar<myt)/B
   pr=sum(tstar>myt)/B
   p=2*min(pl,pr)
-  p
+  print(p)
 }
 
 
