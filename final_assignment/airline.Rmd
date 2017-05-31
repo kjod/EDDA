@@ -19,11 +19,141 @@ fontsize: 11pt
 
 Air travel is increased by blah% in 2016 [reference] in the USA. However, what is relevant or significant when a crash occurs. In this paper this topic will be discussed. The first question that would be interesting is to check to see if a plane that crashes is more likely to crash in a periods after ther the crash. Also additional intresting questions to consinder are if the location of the crash is signicant and if the choice of plane manufacturer has an impact on the number of fatalities.
 
-#provide refernece
+\section{Hypotheses}
+
+In this experiments, we will test if airplane travelling has become safer with time, and it so in what measure. We will also check what causalities may infer in the increase or decrease of aerial incidents, in terms of location of crashes, manufacturers and time.\\
+But, besides these questions, the most important answer we want to clear is: Are airlines that have incidents more prone to have them again, or are they more likely to revert that possiblity?
+
+\section{Datasets}
+
 The datasets used to check this will be drawn from two sources. The first source is taken from the github repository of "fivethirtyeight" which contain airline saftey statistics. The second is drawn from the opendata.socrata site.
 
 %https://github.com/fivethirtyeight/data/blob/master/airline-safety/airline-safety.csv
 %https://opendata.socrata.com/Government/Airplane-Crashes-and-Fatalities-Since-1908/q2te-8cvq
+
+\section{Preliminary tests}
+
+We will first do some preliminary tests on our first dataset. This is a good dataset to do so, as it is really general and it stores information on big periods. It includes the amount of aircrashes per airline in two periods. The first period is from 1985 to 1999, and the second period from 2000 to 2014.
+
+```{r}
+airline=read.csv("data/airline-safety.csv", header=TRUE)
+attach(airline)
+head(airline)
+```
+
+The data is in terms of incidents, fatal accidents and fatalities. With this dataset we can start testing how the flying industry has improved over the years, as a starting point for our reasearch.\\
+The data can be expressed as an experiment of individuals (in our case airlines) that are tested on two periods of time. Per experimental unit, we have amount of incidents, fatal accidents and fatalities. That is three numerical outcomes over two periods per experimental unit. On this dataset we will test the hypothesis that the difference on the mean between the two periods is 0. In other words, we will test if the amount of aerial accidents/fatalities remains unchanged over time, without neither improvement nor deterioration.
+
+\subsection{Plots}
+```{r}
+boxplot(airline$incidents_85_99, airline$incidents_00_14)
+boxplot(airline$fatal_accidents_85_99, airline$fatal_accidents_00_14)
+boxplot(airline$fatalities_85_99, airline$fatalities_00_14)
+```
+
+Looking at the boxplots of our three numerical outcomes, it does seem that our hypothesis is wrong, as it seems that the number of accidents/fatalities decreases on the second period. In the following sections we will prove if this is also the case when performing statistical tests.
+
+\subsection{Incidents}
+
+We will firstly test our hypothesis on the numerical outcome Incidents. As the experimental units are individuals, we can apply a Two-Paired test, assuming the difference between the periods comes from a normal distribution.
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(incidents_85_99-incidents_00_14)
+hist(incidents_85_99-incidents_00_14)
+```
+
+Unluckily, this assumption cannot be done in this data, due to the two big outliers. If we eliminate the outliers though, we can clearly see an underlying Normal Distribution.
+
+```{r}
+insad=incidents_85_99-incidents_00_14
+par(mfrow=c(1,2))
+qqnorm(insad[insad<15])
+hist(insad[insad<15])
+```
+
+For this case we will perform a Two-Paired test on the difference without outliers, and we will back it up with a permutation test, in case the data does not truly underlie on a Normal Distribution.
+
+```{r}
+t.test(insad[insad<15])
+```
+
+The Two-Paired test clearly shows that the difference between the population has to be different from 0, stimating it in a confidence interval between 0.5 and 2.5, which is not that high.
+
+```{r}
+### Permutation Tests - No Normal distribution
+permutation_test = function(mystat, col1, col2){
+  B=1000
+  tstar=numeric(B)
+  for (i in 1:B){
+    temp=t(apply(cbind(col1,col2),1,sample))
+    tstar[i]=mystat(temp[,1],temp[,2])
+  }
+  myt=mystat(col1,col2)
+  print(myt)
+  pl=sum(tstar<myt)/B
+  pr=sum(tstar>myt)/B
+  p=2*min(pl,pr)
+  print(p)
+}
+mystat=function(x,y) {mean(x-y)}
+permutation_test(mystat, airline$incidents_85_99, airline$incidents_00_14)
+```
+
+The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, we can conclude that there is a significant difference between both periods in terms of number of incidents.
+
+\subsection{Fatal Accidents}
+```{r}
+par(mfrow=c(1,2))
+qqnorm(fatal_accidents_85_99-fatal_accidents_00_14)
+hist(fatal_accidents_85_99-fatal_accidents_00_14)
+```
+
+In terms of Fatal Accidents, we find ourselves in a similar state as before. The plots do not seem to resemble a Normal Distribution, although it may be caused by the clearly detectable outliers. Therefore, we will also check the distribution after getting rid of these outliers:
+
+```{r}
+fatal=fatal_accidents_85_99-fatal_accidents_00_14
+par(mfrow=c(1,2))
+qqnorm(fatal[fatal<7])
+hist(fatal[fatal<7])
+```
+
+In this case, even after removing the outliers a Normal Distribution cannot be definitively assumed. Therefore, we will perform only a Permutation Test for this case:
+
+```{r}
+permutation_test(mystat, airline$fatal_accidents_85_99, airline$fatal_accidents_00_14)
+```
+
+Again, the test on Fatal Accidents clearly shows that there is a significant difference between both periods.
+
+\subsection{Fatalities}
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(fatalities_85_99-fatalities_00_14)
+hist(fatalities_85_99-fatalities_00_14)
+```
+
+In the case of Fatalities, we can clearly assume that the difference on Fatalities between the two periods comes from a Normal Distribution. Therefore, we can perform a Two-Paired test on it.
+
+```{r}
+t.test(fatalities_85_99, fatalities_00_14, paired=TRUE)
+```
+
+There seems to be a significant difference between fatalities in the 20th century and the 21st century, being the first significantly higher (with a confidence interval between 9 and 105 instances bigger), following the results on our previous tests.
+
+\subsection{Conclusion on preliminary experiments}
+
+From these preliminary experiments, we can conclude that there has been a significant improvement in flight security from the 20th to the 21st century. This has been a very general experiment, being not enough to get a deeper conclusion. Therefore, we will move to our next dataset for our next experiments, which stores more information in terms of number of experimental units and attributes. With this improvement, we will be able to answer more of our intrigues and on a higher detail.
+
+\section{Deeper Investigation}
+
+
+
+
+
+
+
 
 ```{r}
 airlines_data = read.csv("data/airline_data.csv", header=TRUE)
@@ -33,10 +163,7 @@ airlines_data = read.csv("data/airline_data.csv", header=TRUE)
 ```{r}
 
 ```
-#Data Distrubution
-%for first data set
 
-#Data findings
 
 #Data Cleaning
 Due to teh format of some of the data, The column "Date" needs to be cleaned as the data is agg
