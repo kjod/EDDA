@@ -244,6 +244,8 @@ hist(rpois(1000, lambda = 10))
 hist(rpois(1000, lambda = 15))
 ```
 
+Increasing lambda and r pois seem to show a normal distribution. 
+
 ### 2.
 
 ```{r}
