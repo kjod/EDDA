@@ -14,3 +14,10 @@ temp = as.Date(air$Date,'%m/%d/%Y')
 air$Date = format(temp,'%Y')
 
 fatalities = air$Fatalities[!is.na(air$Fatalities)]
+
+hist(as.numeric(air$Date))
+accidents_per_year = data.frame(table(air$Date))
+plot(accidents_per_year) 
+lines(lowess(accidents_per_year$Var1,accidents_per_year$Freq), col="blue") # lowess line (x,y)
+
+
