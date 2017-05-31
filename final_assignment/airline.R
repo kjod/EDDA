@@ -1,4 +1,4 @@
-airline=read.csv("airline-safety.csv", header=TRUE)
+airline=read.csv("data/airline-safety.csv", header=TRUE)
 
 ### Analysis of data
 boxplot(airline$incidents_85_99, airline$incidents_00_14)
