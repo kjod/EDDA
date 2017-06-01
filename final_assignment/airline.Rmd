@@ -13,7 +13,7 @@ fig_height: 2
 
 \section{Introduction}
 
-Air travel is one of the most widely used modes of transport and also one of the fastest. However, once an airline crashes it tends to have a significant impact on consumer's confidence for travelling with that airline. This was the case with Malysian Airline in \cite{avoid} effectively forcing the airline to reband itself to stay in business. 
+Air travel is one of the most widely used modes of transport and also one of the fastest. However, once an airline crashes it tends to have a significant impact on consumer's confidence for travelling with that airline. This was the case with Malysian Airline in \cite{avoid} effectively forcing the airline to reband itself to stay in business.
 
 The question is, are consumers right to feel this way? If an airline crashes, is this an indicator that they are likely to crash in the future? In this paper this topic will be discussed. By exploring this topic additional questions will appear such as if the location of the crash is signicant or if the choice of plane manufacturer has an impact on the number of fatalities.
 
@@ -41,9 +41,9 @@ First, the data will be explored to check what insghts can be drawn.
 
 ```{r echo=FALSE, fig.height = 3}
 par(mfrow=c(1,3))
-boxplot(airline$incidents_85_99, airline$incidents_00_14, names=c("1985-1999","2000-2014"), ylab ="Incidents", xlab ="Years")
-boxplot(airline$fatal_accidents_85_99, airline$fatal_accidents_00_14, names=c("1985-1999","2000-2014"), ylab ="Accidents", xlab ="Years")
-boxplot(airline$fatalities_85_99, airline$fatalities_00_14, names=c("1985-1999","2000-2014"), ylab ="Fatalities", xlab ="Years")
+boxplot(airline$incidents_85_99, airline$incidents_00_14, names=c("85-99","00-14"), ylab ="Incidents", xlab ="Years")
+boxplot(airline$fatal_accidents_85_99, airline$fatal_accidents_00_14, names=c("85-99","00-14"), ylab ="Accidents", xlab ="Years")
+boxplot(airline$fatalities_85_99, airline$fatalities_00_14, names=c("85-99","00-14"), ylab ="Fatalities", xlab ="Years")
 ```
 
 Looking at the boxplots, of the three numerical outcomes, it does seem that the hypothesis is wrong, as it seems that the number of accidents/fatalities decreases on the second period. In the following sections, this will be checked if this is also the case when performing statistical tests.
@@ -53,7 +53,7 @@ Looking at the boxplots, of the three numerical outcomes, it does seem that the 
 Firstly, to test the hypothesis on the numerical outcome \textit{Incidents}, the Two-Paired test can be applied as the experimental units are individuals however this is assuming that the difference between the periods comes from a normal distribution.
 
 Firstly, the instances in the data that had 0 \textit{Incidents} in the first period will be removed.
-```{r}
+```{r include=FALSE}
 airline=read.csv("data/airline-safety.csv", header=TRUE)
 airline = airline[incidents_85_99>0,]
 attach(airline)
@@ -86,7 +86,6 @@ t.test(incidents_difference[incidents_difference<15])
 The Two-Paired test clearly shows that the difference between the population has to be different from 0, estimating it in a confidence interval between 0.5 and 2.5, which is not that high.
 
 ```{r}
-### Permutation Tests - No Normal distribution
 permutation_test = function(mystat, col1, col2){
   B=1000
   tstar=numeric(B)
@@ -110,7 +109,7 @@ The permutation test clearly backs what was previously seen in the Two-Paired te
 
 \subsection{Fatal Accidents}
 
-```{r}
+```{r include=FALSE}
 airline=read.csv("data/airline-safety.csv", header=TRUE)
 airline = airline[fatal_accidents_85_99>0,]
 attach(airline)
@@ -140,7 +139,7 @@ Again, the test on \textit{Fatal Accidents} clearly shows that there is a signif
 
 \subsection{Fatalities}
 
-```{r include=False}
+```{r include=FALSE}
 airline=read.csv("data/airline-safety.csv", header=TRUE)
 airline = airline[fatalities_85_99>0,]
 attach(airline)
@@ -166,8 +165,9 @@ From these preliminary experiments, the conclusion is that there has been a sign
 
 \section{Deeper Investigation}
 
-The second data set contains 21 columns with over 500 entries. The data-set contains data from 1908 to 2009 with airplane crashes from commercial airlines and miltary planes. For this experiment, only commercial airlines will be consindered and only the columns \textit{Date, Operator, Manufacturer} and \textit{Location} will be used. \textit{Operator} in this data-set is the Airline of the plane that crashed.   
-```{r}
+The second data set contains 21 columns with over 500 entries. The data-set contains data from 1908 to 2009 with airplane crashes from commercial airlines and miltary planes. For this experiment, only commercial airlines will be consindered and only the columns \textit{Date, Operator, Manufacturer} and \textit{Location} will be used. \textit{Operator} in this data-set is the Airline of the plane that crashed.
+
+```{r include=FALSE}
 airlines_data = read.csv("data/airline_data.csv", header=TRUE)
 ```
 
@@ -217,7 +217,7 @@ The data is clearly not normally distrubuted which will filter out any statistic
 To set up the experiment, a function was created to format data into two groups of experimental units, \textit{before} and \textit{after}. The function will also allow for experimentation with different ranges years thus altering the time period in which the \textit{before} and \textit{after} columns would cover. The function is given below:
 ```{r}
 setup_data <- function(date, range, data) {
-    airlines = unique(data$Operator[data$Date == date])#remove filter to include airlines that didn't crash
+    airlines = unique(data$Operator[data$Date == date])
     before = rep(0, length(airlines))
     after = rep(0, length(airlines))
     lower_bound = date - range - 1
@@ -265,7 +265,7 @@ The p-value returns zero for both years 1975 and 2004 using ranges 10 and 5 resp
 
 To test this, the test is run again and the range is shortened for the year 1955 to both 10 and 5. Also the year 1975 is taken with a range of 15 to check the impact that the range of years has on the result.  
 
-```{r}
+```{r, echo=FALSE}
 year = 1955
 range = 10
 print(paste("Testing on year:", year, " Using range:", range))
@@ -323,7 +323,7 @@ Although it would have been nice to apply more advanced data analysis tests (suc
 
 In saying this, it is the belief that hypoyhesis provied is largely proved to be correct but it is highly depenedent on the time period choosen. From the research, it is also shown that air accidents are less likely to occur over time thus making a plane that crashed less likely to crash in the future. Future work would include the investigation of weather patterns in different locations and their significance on the liklihood a plane crashes.
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{4}
   \bibitem{avoid} 
   The Week.
   \textit{The Week, Malaysia Airlines}. 
