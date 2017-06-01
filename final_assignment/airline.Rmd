@@ -10,7 +10,6 @@ highlight: tango
 fontsize: 11pt
 fig_height: 2
 ---
-
 \section{Introduction}
 
 Air travel increased by blah% in 2016 [reference] in the USA. However, what is relevant or significant when a crash occurs. In this paper this topic will be discussed. The first question that would be interesting is to check to see if a plane that crashes is more likely to crash in a periods after ther the crash. Also additional intresting questions to consinder are if the location of the crash is signicant and if the choice of plane manufacturer has an impact on the number of fatalities. 
