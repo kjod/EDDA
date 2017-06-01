@@ -12,20 +12,19 @@ fig_height: 2
 ---
 \section{Introduction}
 
-Air travel increased by blah% in 2016 [reference] in the USA. However, what is relevant or significant when a crash occurs. In this paper this topic will be discussed. The first question that would be interesting is to check to see if a plane that crashes is more likely to crash in a periods after ther the crash. Also additional intresting questions to consinder are if the location of the crash is signicant and if the choice of plane manufacturer has an impact on the number of fatalities. 
-The datasets used to check this will be drawn from two sources. The first source is taken from the github repository of "fivethirtyeight" which contains some general airline saftey statistics from 1980s to 2010s. The second is drawn from the opendata.socrata site which contains more detailed data on airline statistics. 
+Air travel is one of the most widely used modes of transport and also one of the fastest. However, once an airline crashes it tends to have a significant impact on consumer's confidence for travelling with that airline. This was the case with Malysian Airline in \cite{avoid} effectively forcing the airline to reband itself to stay in business. 
 
-%https://github.com/fivethirtyeight/data/blob/master/airline-safety/airline-safety.csv
-%https://opendata.socrata.com/Government/Airplane-Crashes-and-Fatalities-Since-1908/q2te-8cvq
+The question is, are consumers right to feel this way? If an airline crashes, is this an indicator that they are likely to crash in the future? In this paper this topic will be discussed. By exploring this topic additional questions will appear such as if the location of the crash is signicant or if the choice of plane manufacturer has an impact on the number of fatalities.
 
+The datasets used to check this will be drawn from two sources. The first source is taken from the github repository of \textit{Five Thirty Eight} \cite{datasource1} which contains some general airline saftey statistics from 1980s to 2010s. A similar comparison was done by \textit{Five Thirty Eight} but in this paper will use an additional more indept data set and filter by only checking airlines that has an accident to see if they are likely to have one in the future. The second data-set is drawn from the \textit{Socrata} \cite{datasource2} site which contains more detailed data on airline statistics. 
 
 \section{Hypotheses}
 
-The research question is does the prior number of casualties of an airplane mean that this airplane is more likely to crash in the future. From this one question many subquestions will arise such as has air travel become safer with time, how the amount of causalities are affected by the location of crashes, manufacturers and the year of the crash.
+The research question is does the prior number of casualties of an airplane mean that this airplane is more likely to crash in the future. From this one question many subquestions will arise, as mentioned before, such as has air travel become safer with time, how the amount of causalities are affected by the location of crashes, manufacturers and the year of the crash.
 
 \section{Preliminary tests}
 
-Firstly, some preliminary tests are conducted on the first dataset. This is a good dataset to do so, as it is really general and it stores information on two big periods which include the amount of aircrashes per airline from 1985 to 1999 and from 2000 to 2014.
+Firstly, some preliminary tests are conducted on the first dataset. This dataset offers a general overview of two big periods which include the amount of aircrashes per airline from 1985 to 1999 and from 2000 to 2014. From this data set, a general consensus can be obtatined which can be further expanded upon with the second data set.  
 
 ```{r, echo=FALSE}
 airline=read.csv("data/airline-safety.csv", header=TRUE)
@@ -34,9 +33,10 @@ print(names(airline))
 ```
 
 The data is in terms of incidents, fatal accidents and fatalities. With this dataset, testing how the flying industry has improved over the years can be used as a starting point for our reasearch.
-The data can be expressed as an experiment of individuals (in this case airlines) that are tested on two periods of time. Per experimental unit, there are amount of incidents, fatal accidents and fatalities. That is three numerical outcomes over two periods per experimental unit. On this dataset the hypothesis that the difference on the mean between the two periods is 0 will be tested. In other words, the test will be the amount of aerial accidents/fatalities that remains unchanged over time without neither improvement nor deterioration.
+The data can be expressed as an experiment of individuals (in this case airlines) that are tested on two periods of time. There are three experimental units that can be tested to confirm the hypothesis which include: teh amount of incidents, fatal accidents and fatalities. On this dataset the hypothesis that the difference on the mean between the two periods is 0 will be tested. In other words, the test will be the amount of aerial accidents/fatalities that remain unchanged over time without neither improvement nor deterioration.
 
-\subsection{Plots}
+\section{Data}
+First, the data will be explored to check what insghts can be drawn.
 ```{r echo=FALSE, fig.height = 3}
 par(mfrow=c(1,3))
 boxplot(airline$incidents_85_99, airline$incidents_00_14, names=c("1985-1999","2000-2014"), ylab ="Incidents", xlab ="Years")
@@ -44,11 +44,11 @@ boxplot(airline$fatal_accidents_85_99, airline$fatal_accidents_00_14, names=c("1
 boxplot(airline$fatalities_85_99, airline$fatalities_00_14, names=c("1985-1999","2000-2014"), ylab ="Fatalities", xlab ="Years")
 ```
 
-Looking at the boxplots, of the three numerical outcomes, it does seem that the hypothesis is wrong, as it seems that the number of accidents/fatalities decreases on the second period. In the following sections we will prove if this is also the case when performing statistical tests.
+Looking at the boxplots, of the three numerical outcomes, it does seem that the hypothesis is wrong, as it seems that the number of accidents/fatalities decreases on the second period. In the following sections, this will be checked if this is also the case when performing statistical tests.
 
 \subsection{Incidents}
 
-Firstly, to test the hypothesis on the numerical outcome Incidents. As the experimental units are individuals, we can apply a Two-Paired test, assuming the difference between the periods comes from a normal distribution.
+Firstly, to test the hypothesis on the numerical outcome \textit{Incidents}, the Two-Paired test can be applied as the experimental units are individuals however this is assuming that the difference between the periods comes from a normal distribution.
 
 ```{r, echo=FALSE, fig.height = 2.5}
 par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
@@ -56,7 +56,7 @@ qqnorm(incidents_85_99-incidents_00_14, xlab="", ylab="")
 hist(incidents_85_99-incidents_00_14, xlab="", ylab="")
 ```
 
-Unluckily, this assumption cannot be applied to this data due to the two big outliers. If the outliers are eliminate though, one can clearly see an underlying Normal Distribution.
+Unforunately, this assumption cannot be applied to this data due to two big outliers. If the outliers are eliminated, one can clearly see an underlying Normal Distribution.
 
 ```{r, echo=FALSE, fig.height = 2.5}
 incidents_difference=incidents_85_99-incidents_00_14
@@ -65,7 +65,7 @@ qqnorm(incidents_difference[incidents_difference<15], xlab="", ylab="")
 hist(incidents_difference[incidents_difference<15], main="incidents_difference", xlab="", ylab="")
 ```
 
-For this case, a Two-Paired test on the difference without outliers is perform and will be backed up with a permutation test due to the fact that the data might not not truly have an underling Normal Distribution.
+For this case, a Two-Paired test on the difference without outliers is performed and will be backed up with a permutation test due to the fact that the data might not not truly have an underling Normal Distribution.
 
 ```{r}
 t.test(incidents_difference[incidents_difference<15])
@@ -94,7 +94,7 @@ mystat=function(x,y) {mean(x-y)}
 permutation_test(mystat, incidents_85_99, incidents_00_14)
 ```
 
-The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, it can be concluded that there is a significant difference between both periods in terms of the number of incidents.
+The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, it can be concluded that there is a significant difference between both periods in terms of the number of \textit{Incidents}.
 
 \subsection{Fatal Accidents}
 ```{r, echo=FALSE, fig.height = 2.5}
@@ -103,7 +103,7 @@ qqnorm(fatal_accidents_85_99-fatal_accidents_00_14, xlab="", ylab="")
 hist(fatal_accidents_85_99-fatal_accidents_00_14, xlab="", ylab="")
 ```
 
-In terms of Fatal Accidents, there is a similar state as before. The plots do not seem to resemble a Normal Distribution, although it may be caused by the clearly detectable outliers. Therefore, the distribution will be checked after getting rid of these outliers:
+In terms of \textit{Fatal Accidents}, there is a similar situation as before. The plots do not seem to resemble a Normal Distribution, although it may be caused by the clearly detectable outliers. Therefore, the distribution will be checked after getting rid of these outliers:
 
 ```{r, echo=FALSE, fig.height = 2.5}
 fatal=fatal_accidents_85_99-fatal_accidents_00_14
@@ -118,7 +118,7 @@ In this case, even after removing the outliers, a Normal Distribution cannot be 
 permutation_test(mystat, fatal_accidents_85_99, fatal_accidents_00_14)
 ```
 
-Again, the test on Fatal Accidents clearly shows that there is a significant difference between both periods.
+Again, the test on \textit{Fatal Accidents} clearly shows that there is a significant difference between both periods.
 
 \subsection{Fatalities}
 
@@ -128,27 +128,27 @@ qqnorm(fatalities_85_99-fatalities_00_14, xlab="", ylab="")
 hist(fatalities_85_99-fatalities_00_14, xlab="", ylab="")
 ```
 
-In the case of Fatalities, it can be assumed that the difference on Fatalities between the two periods comes from a Normal Distribution. Therefore, a Two-Paired test can be used.
+In the case of \textit{Fatalities}, it can be assumed that the difference on Fatalities between the two periods comes from a Normal Distribution. Therefore, a Two-Paired test can be used.
 
 ```{r}
 t.test(fatalities_85_99, fatalities_00_14, paired=TRUE)
 ```
 
-There seems to be a significant difference between fatalities in the 20th century and the 21st century, being the first significantly higher (with a confidence interval between 9 and 105 instances bigger), following the results on our previous tests.
+There seems to be a significant difference between the \textit{Fatalities} in the 20th century and the 21st century with the first being significantly higher (with a confidence interval between 9 and 105 instances bigger), following the results on the previous tests.
 
 \subsection{Conclusion on preliminary experiments}
 
-From these preliminary experiments, the conclusion is that there has been a significant improvement in flight saftey from the 20th to the 21st century. This has been a very general experiment, being not enough to get a deeper conclusion. Therefor in the next section, a dataset which stores more information in terms of number of experimental units and attributes will be used. With this improvement, a deeper experiment can be carried outS.
+From these preliminary experiments, the conclusion is that there has been a significant improvement in flight saftey from the 20th to the 21st century and that an airline that has crashed in not a indication that they are likely to crash again. However, this experiment has used data only from two periods where the period, in this case 10 years, might be two small or two big. Therefore in the next section, different year periods will be used along with additional information such as manufatuer and location of crash. With this improvement, a deeper experiment can be carried out.
 
 \section{Deeper Investigation}
-
+The second data set contains 21 columns with over 500 entries. The data-set contains data from 1908 to 2009 with airplane crashes from commercial airlines and miltary planes. For this experiment, only commercial airlines will be consindered and only the columns \textit{Date, Operator, Manufacturer} and \textit{Location} will be used. \textit{Operator} in this data-set is the Airline of the plane that crashed.   
 ```{r}
 airlines_data = read.csv("data/airline_data.csv", header=TRUE)
 ```
 
-\subsection{Data Cleaning}
+\section{Data Cleaning}
 
-Due to the format of some of the data, The column "Date" needs to be cleaned as the data needs to be aggregated by year. Also invalid entires need to be filtered out.
+Due to the format of some of the data, some small data cleaning had to be performed. The column \textit{Date} needs to be cleaned as the data needs to be aggregated by year for the statiscal test. Also invalid entires need to be filtered out along with any miltary crashes.
 
 ```{r}
 #delete Summary column
@@ -168,8 +168,6 @@ airlines_data$Date = format(temp,'%Y')
 ```
 
 \section{Data}
-%for Second data set
-\subsection{Data Distributions}
 To check what test can be applied, the distrubution of the data is checked. 
 
 ```{r, echo=FALSE, fig.height = 3.5}
@@ -177,10 +175,10 @@ par(mfrow=c(1,2))
 hist(airlines_data$Fatalities)
 qqnorm(airlines_data$Fatalities)
 ```
-The data is clearly not normally distrubuted which will filter out any statistical test that is based on this assumption.
+The data is clearly not normally distrubuted which will filter out any statistical test that is based on this assumption. In this case a permuation test will be used, however to do this the data needs to be formatted in such away in which it has two groups of experimental units.
 
 \subsection{Setting up Experiments}
-To set up the experiment, a function was created to give data in the format where before and after columns could be created and used to test the research question. The function is given below:
+To set up the experiment, a function was created to format data into two groups of experimental units, \textit{before} and \textit{after}. The function will also allow for experimentation with different ranges years thus altering the time period in which the \textit{before} and \textit{after} columns would cover. The function is given below:
 ```{r}
 setup_data <- function(date, range, data) {
     airlines = unique(data$Operator[data$Date == date])#remove filter to include airlines that didn't crash
@@ -198,13 +196,13 @@ setup_data <- function(date, range, data) {
     return(df)
 }
 ```
-This function is created to aggregate the data for a year. This gives for each airline a before and after figure. This function is fed a year and range. The range selects the range plus and minus around the year given. The aim is to provide a data set where it can be determined if a plane crashes(the before column) are they more likely to crash in the near future(the after column). Serveal dates are used 1965, 1975, 1985 , 1995 and 2004. The range used will be 5 years.
+This function is created to aggregate the data for a year. This gives for each airline a \textit{before} and \textit{after} figure. This function is fed a year and range. The range alters the \textit{before} and \textit{after} columns. The aim is to provide a data-set where it can be determined that if a plane crashes(the \textit{before} column) are they more likely to crash in the near future(the \textit{after} column).
 
 ```{r include=FALSE}
 aggregate_data = setup_data(1973, 1, airlines_data)
 ```
 \subsection{Experiment}
-The expeiments are carries out on three year ranges 1955, 1975, 2004 with a range of 15, 10 and 5 applied repectively.
+The experiments are carried out on three years 1955, 1975, 2004 with ranges of 15, 10 and 5 applied repectively. This allows for experimentation with years and experimentation with the ranges.
 \subsection{}
 ```{r, echo=FALSE}
 year = 1955
@@ -226,9 +224,9 @@ print(paste("Testing on year:", year, " Using range:", range))
 aggregate_data = setup_data(year, range, airlines_data)
 permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
 ```
-The p-value returns zero for both years 1975 and 2004 using ranges 10 and 5 respectively. However, 1955 with a big range of 15 years returns a p-value of 0.322. This could be because 15 years after the date 1955, air transport could have becoming more popular which could have led to more crashes.
+The p-value returns zero for both years 1975 and 2004 using ranges 10 and 5 respectively. However, 1955 with a big range of 15 years returns a p-value of 0.322. This could be because of the date 1955, air transport could have been becoming a more affordable options which in turn could have led to more crashes.
 
-The test is run again and the range is shortened for the year 1955 to both 10 and 5. Also the year 1975 is taken with a range of 15 to chekc the impact of the range of years.  
+To test this, the test is run again and the range is shortened for the year 1955 to both 10 and 5. Also the year 1975 is taken with a range of 15 to check the impact that the range of years has on the result.  
 
 ```{r}
 year = 1955
@@ -257,10 +255,30 @@ permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggreg
 
 ```
 
-From this we can draw two conclusions, one that the range used has a impact on the p-value. Also because the date with 1975  that the period 1950s and 1960s which is known as a golden age in aviation. %https://www.skyscanner.com.au/news/airlines/the-golden-age-of-plane-travel-what-flying-was-like-in-the-1950s-and-1960s-compared-to-now/
-This could be because that the technology is new making the risk of crashing higher.
+From this, two conclusions van be drawn. One that the range used has a impact on the p-value, this is seeb in 1975 has the p-value increase but only by a small amount. Secondly, the date 1955 seems significant. After some research it was found that the period from 1950s and 1960s is known as the golden age in aviation \cite{goldenage}. Air travel became a much more affordable option for people to persue but lacked many of the saftey standards implemeted today. This could make the risk of crashing higher however this would have to be investigated further.
 
-\subsection{Conclusions}
+\section{Conclusions}
 
 
-\subsection{References}
+
+\begin{thebibliography}{9}
+  \bibitem{avoid} 
+  The Week.
+  \textit{The Week, Malaysia Airlines}. 
+  http://theweek.com/speedreads/449761/passengers-are-already-avoiding-malaysia-airlines
+  
+  \bibitem{datasource1} 
+  Five Thirty Eight. 
+  \textit{Five Thirty Eight, Airline Saftey}. 
+  https://github.com/fivethirtyeight/data/blob/master/airline-safety/airline-safety.csv
+   
+  \bibitem{datasource2} 
+  Socrata.
+  \textit{OpenData.Socrata, Airplane-Crashes-and-Fatalities-Since-1908} 
+  https://opendata.socrata.com/Government/Airplane-Crashes-and-Fatalities-Since-1908/q2te-8cvq
+   
+  \bibitem{goldenage} 
+  Air And Space.
+  \texttt{Airandspace Heyday}
+  https://airandspace.si.edu/exhibitions/america-by-air/online/heyday/heyday11.cfm
+\end{thebibliography}
