@@ -32,7 +32,7 @@ The research question is does the prior number of casualties of an airplane mean
 
 Firstly, some preliminary tests are conducted on the first dataset. This is a good dataset to do so, as it is really general and it stores information on two big periods which include the amount of aircrashes per airline from 1985 to 1999 and from 2000 to 2014.
 
-```{r, echo=false}
+```{r, echo=FALSE}
 airline=read.csv("data/airline-safety.csv", header=TRUE)
 attach(airline)
 print(names(airline))
@@ -42,41 +42,41 @@ The data is in terms of incidents, fatal accidents and fatalities. With this dat
 The data can be expressed as an experiment of individuals (in this case airlines) that are tested on two periods of time. Per experimental unit, there are amount of incidents, fatal accidents and fatalities. That is three numerical outcomes over two periods per experimental unit. On this dataset the hypothesis that the difference on the mean between the two periods is 0 will be tested. In other words, the test will be the amount of aerial accidents/fatalities that remains unchanged over time without neither improvement nor deterioration.
 
 \subsection{Plots}
-```{r echo=false}
+```{r echo=FALSE}
 par(mfrow=c(1,3))
-boxplot(airline$incidents_85_99, airline$incidents_00_14, title="Indicents")
-boxplot(airline$fatal_accidents_85_99, airline$fatal_accidents_00_14)
-boxplot(airline$fatalities_85_99, airline$fatalities_00_14)
+boxplot(airline$incidents_85_99, airline$incidents_00_14, names=c("1985-1999","2000-2014"), ylab ="Incidents", xlab ="Years")
+boxplot(airline$fatal_accidents_85_99, airline$fatal_accidents_00_14, names=c("1985-1999","2000-2014"), ylab ="Accidents", xlab ="Years")
+boxplot(airline$fatalities_85_99, airline$fatalities_00_14, names=c("1985-1999","2000-2014"), ylab ="Fatalities", xlab ="Years")
 ```
 
-Looking at the boxplots of our three numerical outcomes, it does seem that our hypothesis is wrong, as it seems that the number of accidents/fatalities decreases on the second period. In the following sections we will prove if this is also the case when performing statistical tests.
+Looking at the boxplots, of the three numerical outcomes, it does seem that the hypothesis is wrong, as it seems that the number of accidents/fatalities decreases on the second period. In the following sections we will prove if this is also the case when performing statistical tests.
 
 \subsection{Incidents}
 
-We will firstly test our hypothesis on the numerical outcome Incidents. As the experimental units are individuals, we can apply a Two-Paired test, assuming the difference between the periods comes from a normal distribution.
+Firstly, to test the hypothesis on the numerical outcome Incidents. As the experimental units are individuals, we can apply a Two-Paired test, assuming the difference between the periods comes from a normal distribution.
 
-```{r}
+```{r, echo=FALSE}
 par(mfrow=c(1,2))
 qqnorm(incidents_85_99-incidents_00_14)
 hist(incidents_85_99-incidents_00_14)
 ```
 
-Unluckily, this assumption cannot be done in this data, due to the two big outliers. If we eliminate the outliers though, we can clearly see an underlying Normal Distribution.
+Unluckily, this assumption cannot be applied to this data due to the two big outliers. If the outliers are eliminate though, one can clearly see an underlying Normal Distribution.
 
-```{r}
+```{r, echo=FALSE}
 insad=incidents_85_99-incidents_00_14
 par(mfrow=c(1,2))
 qqnorm(insad[insad<15])
 hist(insad[insad<15])
 ```
 
-For this case we will perform a Two-Paired test on the difference without outliers, and we will back it up with a permutation test, in case the data does not truly underlie on a Normal Distribution.
+For this case, a Two-Paired test on the difference without outliers is perform and will be backed up with a permutation test due to the fact that the data might not not truly have an underling Normal Distribution.
 
 ```{r}
 t.test(insad[insad<15])
 ```
 
-The Two-Paired test clearly shows that the difference between the population has to be different from 0, stimating it in a confidence interval between 0.5 and 2.5, which is not that high.
+The Two-Paired test clearly shows that the difference between the population has to be different from 0, estimating it in a confidence interval between 0.5 and 2.5, which is not that high.
 
 ```{r}
 ### Permutation Tests - No Normal distribution
@@ -95,44 +95,44 @@ permutation_test = function(mystat, col1, col2){
   print(p)
 }
 mystat=function(x,y) {mean(x-y)}
-permutation_test(mystat, airline$incidents_85_99, airline$incidents_00_14)
+permutation_test(mystat, incidents_85_99, incidents_00_14)
 ```
 
-The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, we can conclude that there is a significant difference between both periods in terms of number of incidents.
+The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, it can be concluded that there is a significant difference between both periods in terms of the number of incidents.
 
 \subsection{Fatal Accidents}
-```{r}
+```{r, echo=False}
 par(mfrow=c(1,2))
 qqnorm(fatal_accidents_85_99-fatal_accidents_00_14)
 hist(fatal_accidents_85_99-fatal_accidents_00_14)
 ```
 
-In terms of Fatal Accidents, we find ourselves in a similar state as before. The plots do not seem to resemble a Normal Distribution, although it may be caused by the clearly detectable outliers. Therefore, we will also check the distribution after getting rid of these outliers:
+In terms of Fatal Accidents, there is a similar state as before. The plots do not seem to resemble a Normal Distribution, although it may be caused by the clearly detectable outliers. Therefore, the distribution will be checked after getting rid of these outliers:
 
-```{r}
+```{r, echo=FALSE}
 fatal=fatal_accidents_85_99-fatal_accidents_00_14
 par(mfrow=c(1,2))
 qqnorm(fatal[fatal<7])
 hist(fatal[fatal<7])
 ```
 
-In this case, even after removing the outliers a Normal Distribution cannot be definitively assumed. Therefore, we will perform only a Permutation Test for this case:
+In this case, even after removing the outliers, a Normal Distribution cannot be definitively assumed. Therefore, only a Permutation Test will be carried out for this case:
 
 ```{r}
-permutation_test(mystat, airline$fatal_accidents_85_99, airline$fatal_accidents_00_14)
+permutation_test(mystat, fatal_accidents_85_99, fatal_accidents_00_14)
 ```
 
 Again, the test on Fatal Accidents clearly shows that there is a significant difference between both periods.
 
 \subsection{Fatalities}
 
-```{r}
+```{r, echo=FALSE}
 par(mfrow=c(1,2))
 qqnorm(fatalities_85_99-fatalities_00_14)
 hist(fatalities_85_99-fatalities_00_14)
 ```
 
-In the case of Fatalities, we can clearly assume that the difference on Fatalities between the two periods comes from a Normal Distribution. Therefore, we can perform a Two-Paired test on it.
+In the case of Fatalities, it can be assumed that the difference on Fatalities between the two periods comes from a Normal Distribution. Therefore, a Two-Paired test can be used.
 
 ```{r}
 t.test(fatalities_85_99, fatalities_00_14, paired=TRUE)
@@ -142,41 +142,44 @@ There seems to be a significant difference between fatalities in the 20th centur
 
 \subsection{Conclusion on preliminary experiments}
 
-From these preliminary experiments, we can conclude that there has been a significant improvement in flight security from the 20th to the 21st century. This has been a very general experiment, being not enough to get a deeper conclusion. Therefore, we will move to our next dataset for our next experiments, which stores more information in terms of number of experimental units and attributes. With this improvement, we will be able to answer more of our intrigues and on a higher detail.
+From these preliminary experiments, the conclusion is that there has been a significant improvement in flight saftey from the 20th to the 21st century. This has been a very general experiment, being not enough to get a deeper conclusion. Therefor in the next section, a dataset which stores more information in terms of number of experimental units and attributes will be used. With this improvement, a deeper experiment can be carried outS.
 
 \section{Deeper Investigation}
 
 
-#provide referenece
-\section{Setting Up Experiment}
 
 
-```{r, include=FALSE}
+
+
+
+
+```{r}
 airlines_data = read.csv("data/airline_data.csv", header=TRUE)
 ```
 
-\section{Data}
-%for Second data set
-\subsection{Data Distributions}
-To check what test can be applied, the distrubution of the data is checked. 
+#Data Cleaning
 
-```{r}
-par(mfrow=c(1,2))
-hist(airlines_data$Fatalities)
-qqnorm(airlines_data$Fatalities)
-```
-The data is clearly not normally distrubuted which will filter out any statistical test that is based on this assumption.
-
-\subsection{Data Cleaning}
 Due to the format of some of the data, The column "Date" needs to be cleaned as the data is agg
+
 ```{r}
-airlines_selection_data = airlines_data[airlines_data$Classification == "Non Military",]
-temp = as.Date(airlines_selection_data$Date,'%m/%d/%Y')
-airlines_selection_data['Date'] = format(temp,'%Y')
+#delete Summary column
+airlines_data=airlines_data[ , !(names(airlines_data)=='Summary')]
+#transform Location column into countries
+library(stringr)
+temp=str_split_fixed(airlines_data$Location, ", ", 2)
+countries=temp[,2]
+airlines_data$Location=countries
+#delete Empty Locations
+airlines_data = airlines_data[!airlines_data$Location=="",]
+#delete Military data
+airlines_data = airlines_data[airlines_data$Classification=="Non Military",]
+#transform Date to Years
+temp = as.Date(airlines_data$Date,'%m/%d/%Y')
+airlines_data$Date = format(temp,'%Y')
 ```
 
-\subsection{Setting up experiment}
-To set up the experiment, a function was created to give data in the format where before and after columns could be created and used to test the research question. Also created is a function to carry out a permutation test. The functions are given below:
+#Setting up experiment
+To set up the experiment, a function was created to give data in the format where before and after columns could be created and used to test the research question. The function is given below:
 ```{r}
 setup_data <- function(date, range, data) {
     airlines = unique(data$Operator[data$Date == date])#remove filter to include airlines that didn't crash
@@ -193,39 +196,10 @@ setup_data <- function(date, range, data) {
     }
     return(df)
 }
-
-permutation_test <- function(mystat, col1, col2){
-  B=1000
-  tstar=numeric(B)
-  for (i in 1:B){
-    temp=t(apply(cbind(col1,col2),1,sample))
-    tstar[i]=mystat(temp[,1],temp[,2])
-  }
-  myt=mystat(col1,col2)
-  print(myt)
-  pl=sum(tstar<myt)/B
-  pr=sum(tstar>myt)/B
-  p=2*min(pl,pr)
-  print(p)
-}
-
 ```
-This function setup_data is created to aggregate the data for a year. This gives for each airline a before and after figure. This function is fed a year and range. The range selects the range plus and minus around the year given. The aim is to provide a data set where it can be determined if a plane crashes(the before column) are they more likely to crash in the near future(the after column). Serveal dates are used 1965, 1975, 1985 , 1995 and 2004. The range used will be 5 years.
-
-```{r, include=False}
-aggregate_data = setup_data(2004, 5, airlines_selection_data)
-```
+This function is created to aggregate the data for a year. This gives for each airline a before and after figure. This function is fed a year and range. The range selects the range plus and minus around the year given. The aim is to provide a data set where it can be determined if a plane crashes(the before column) are they more likely to crash in the near future(the after column). Serveal dates are used 1965, 1975, 1985 , 1995 and 2004. The range used will be 5 years.
 
 ```{r}
-
-mystat=function(x,y) {mean(x-y)}
-permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
-```
-#boxplot(airlines_selection_data$Fat, airline$fatal_accidents_00_14)
-#boxplot(airlines_selection_data$fatalities_85_99, airline$fatalities_00_14)
-```{r, echo=false}
-  ### Permutation Tests (lecture 4) - No Normal distribution
+aggregate_data = setup_data(1965, 5, airlines_selection_data)
 
 ```
-
-\section{References}
