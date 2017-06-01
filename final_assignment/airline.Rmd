@@ -37,7 +37,7 @@ The data is in terms of incidents, fatal accidents and fatalities. With this dat
 The data can be expressed as an experiment of individuals (in this case airlines) that are tested on two periods of time. There are three experimental units that can be tested to confirm the hypothesis which include: teh amount of incidents, fatal accidents and fatalities. On this dataset the hypothesis that the difference on the mean between the two periods is 0 will be tested. In other words, the test will be the amount of aerial accidents/fatalities that remain unchanged over time without neither improvement nor deterioration.
 
 \section{Data}
-First, the data will be explored to check what insghts can be drawn.
+First, the data will be explored to check what insights can be drawn.
 
 ```{r echo=FALSE, fig.height = 3}
 par(mfrow=c(1,3))
@@ -262,6 +262,7 @@ print(paste("Testing on year:", year, " Using range:", range))
 aggregate_data = setup_data(year, range, airlines_data)
 permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
 ```
+
 The p-value returns zero for both years 1975 and 2004 using ranges 10 and 5 respectively. However, 1955 with a big range of 15 years returns a p-value of 0.322. This could be because of the date 1955, air transport could have been becoming a more affordable options which in turn could have led to more crashes.
 
 To test this, the test is run again and the range is shortened for the year 1955 to both 10 and 5. Also the year 1975 is taken with a range of 15 to check the impact that the range of years has on the result.  
@@ -293,7 +294,7 @@ permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggreg
 
 ```
 
-From this, two conclusions can be drawn. One that the range used has a impact on the p-value, this is seeb in 1975 has the p-value increase but only by a small amount. Secondly, the date 1955 seems significant. After some research it was found that the period from 1950s and 1960s is known as the golden age in aviation \cite{goldenage}. This reminiscent of the graph produced in the Data section as air travel became a much more affordable option for people to persue but lacked many of the saftey standards implemeted today lead to increase in the number of accidents. This would in theroy make the risk of crashing higher however this would have to be investigated further.
+From this, two conclusions can be drawn. One that the range used has a impact on the p-value, this is seeb in 1975 has the p-value increase but only by a small amount. Secondly, the date 1955 seems significant. After some research it was found that the period from 1950s and 1960s is known as the golden age in aviation \cite{goldenage}. This reminiscent of the graph produced in the Data section as air travel became a much more affordable option for people to persue but lacked many of the safety standards implemeted today lead to increase in the number of accidents. This would in theroy make the risk of crashing higher however this would have to be investigated further.
 
 Seeing as the data-set is quite big, one year will be used to see if a particular manufacturer or location alter the probablity of having a crash. In this case, 1955 will be checked. The data for this is displayed below to see if the normal assunmption is true. Also only tests that are checked agianst \textit{Fatalties} will be used.
 
