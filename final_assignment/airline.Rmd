@@ -87,7 +87,7 @@ permutation_test = function(mystat, col1, col2){
   pl=sum(tstar<myt)/B
   pr=sum(tstar>myt)/B
   p=2*min(pl,pr)
-  print(paste("Threshold: ", myt ,"P-value:", p))
+  print(paste("Mean Diff: ", myt ,"P-value:", p))
   #print(p)
 }
 mystat=function(x,y) {mean(x-y)}
@@ -226,6 +226,41 @@ print(paste("Testing on year:", year, " Using range:", range))
 aggregate_data = setup_data(year, range, airlines_data)
 permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
 ```
+The p-value returns zero for both years 1975 and 2004 using ranges 10 and 5 respectively. However, 1955 with a big range of 15 years returns a p-value of 0.322. This could be because 15 years after the date 1955, air transport could have becoming more popular which could have led to more crashes.
+
+The test is run again and the range is shortened for the year 1955 to both 10 and 5. Also the year 1975 is taken with a range of 15 to chekc the impact of the range of years.  
+
+```{r}
+year = 1955
+range = 10
+print(paste("Testing on year:", year, " Using range:", range))
+aggregate_data = setup_data(year, range, airlines_data)
+permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
+
+year = 1955
+range = 5
+print(paste("Testing on year:", year, " Using range:", range))
+aggregate_data = setup_data(year, range, airlines_data)
+permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
+
+year = 1955
+range = 2
+print(paste("Testing on year:", year, " Using range:", range))
+aggregate_data = setup_data(year, range, airlines_data)
+permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
+
+year = 1975
+range = 15
+print(paste("Testing on year:", year, " Using range:", range))
+aggregate_data = setup_data(year, range, airlines_data)
+permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
+
+```
+
+From this we can draw two conclusions, one that the range used has a impact on the p-value. Also because the date with 1975  that the period 1950s and 1960s which is known as a golden age in aviation. %https://www.skyscanner.com.au/news/airlines/the-golden-age-of-plane-travel-what-flying-was-like-in-the-1950s-and-1960s-compared-to-now/
+This could be because that the technology is new making the risk of crashing higher.
+
 \subsection{Conclusions}
+
 
 \subsection{References}
