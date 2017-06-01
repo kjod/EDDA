@@ -51,25 +51,25 @@ Looking at the boxplots, of the three numerical outcomes, it does seem that the 
 
 Firstly, to test the hypothesis on the numerical outcome Incidents. As the experimental units are individuals, we can apply a Two-Paired test, assuming the difference between the periods comes from a normal distribution.
 
-```{r, echo=FALSE, fig.height = 3.5}
-par(mfrow=c(1,2))
-qqnorm(incidents_85_99-incidents_00_14)
-hist(incidents_85_99-incidents_00_14)
+```{r, echo=FALSE, fig.height = 2.5}
+par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
+qqnorm(incidents_85_99-incidents_00_14, xlab="", ylab="")
+hist(incidents_85_99-incidents_00_14, xlab="", ylab="")
 ```
 
 Unluckily, this assumption cannot be applied to this data due to the two big outliers. If the outliers are eliminate though, one can clearly see an underlying Normal Distribution.
 
-```{r, echo=FALSE, fig.height = 3.5}
-insad=incidents_85_99-incidents_00_14
-par(mfrow=c(1,2))
-qqnorm(insad[insad<15])
-hist(insad[insad<15])
+```{r, echo=FALSE, fig.height = 2.5}
+incidents_difference=incidents_85_99-incidents_00_14
+par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
+qqnorm(incidents_difference[incidents_difference<15], xlab="", ylab="")
+hist(incidents_difference[incidents_difference<15], main="incidents_difference", xlab="", ylab="")
 ```
 
 For this case, a Two-Paired test on the difference without outliers is perform and will be backed up with a permutation test due to the fact that the data might not not truly have an underling Normal Distribution.
 
 ```{r}
-t.test(insad[insad<15])
+t.test(incidents_difference[incidents_difference<15])
 ```
 
 The Two-Paired test clearly shows that the difference between the population has to be different from 0, estimating it in a confidence interval between 0.5 and 2.5, which is not that high.
@@ -97,19 +97,19 @@ permutation_test(mystat, incidents_85_99, incidents_00_14)
 The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, it can be concluded that there is a significant difference between both periods in terms of the number of incidents.
 
 \subsection{Fatal Accidents}
-```{r, echo=FALSE, fig.height = 3.5}
-par(mfrow=c(1,2))
-qqnorm(fatal_accidents_85_99-fatal_accidents_00_14)
-hist(fatal_accidents_85_99-fatal_accidents_00_14)
+```{r, echo=FALSE, fig.height = 2.5}
+par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
+qqnorm(fatal_accidents_85_99-fatal_accidents_00_14, xlab="", ylab="")
+hist(fatal_accidents_85_99-fatal_accidents_00_14, xlab="", ylab="")
 ```
 
 In terms of Fatal Accidents, there is a similar state as before. The plots do not seem to resemble a Normal Distribution, although it may be caused by the clearly detectable outliers. Therefore, the distribution will be checked after getting rid of these outliers:
 
-```{r, echo=FALSE, fig.height = 3.5}
+```{r, echo=FALSE, fig.height = 2.5}
 fatal=fatal_accidents_85_99-fatal_accidents_00_14
-par(mfrow=c(1,2))
-qqnorm(fatal[fatal<7])
-hist(fatal[fatal<7])
+par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
+qqnorm(fatal[fatal<7], xlab="", ylab="")
+hist(fatal[fatal<7], main="fatal_accidents_difference", xlab="", ylab="")
 ```
 
 In this case, even after removing the outliers, a Normal Distribution cannot be definitively assumed. Therefore, only a Permutation Test will be carried out for this case:
@@ -122,10 +122,10 @@ Again, the test on Fatal Accidents clearly shows that there is a significant dif
 
 \subsection{Fatalities}
 
-```{r, echo=FALSE, fig.height = 3.5}
-par(mfrow=c(1,2))
-qqnorm(fatalities_85_99-fatalities_00_14)
-hist(fatalities_85_99-fatalities_00_14)
+```{r, echo=FALSE, fig.height = 2.5}
+par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
+qqnorm(fatalities_85_99-fatalities_00_14, xlab="", ylab="")
+hist(fatalities_85_99-fatalities_00_14, xlab="", ylab="")
 ```
 
 In the case of Fatalities, it can be assumed that the difference on Fatalities between the two periods comes from a Normal Distribution. Therefore, a Two-Paired test can be used.
