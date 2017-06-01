@@ -26,25 +26,25 @@ The datasets used to check this will be drawn from two sources. The first source
 
 \section{Hypotheses}
 
-The research question is does the prior number of casualties of an airplane mean that this airplane is more likely to crash in the future. From this one question many subquestions will arise such as has air travel become safer with time, how the amount of causalities are affected by the location of crashes, manufacturers and the year of teh crash
+The research question is does the prior number of casualties of an airplane mean that this airplane is more likely to crash in the future. From this one question many subquestions will arise such as has air travel become safer with time, how the amount of causalities are affected by the location of crashes, manufacturers and the year of the crash.
 
 \section{Preliminary tests}
 
-Firstly, some preliminary tests are conducted on ethe first dataset. This is a good dataset to do so, as it is really general and it stores information on big periods. It includes the amount of aircrashes per airline in two periods. The first period is from 1985 to 1999, and the second period from 2000 to 2014.
+Firstly, some preliminary tests are conducted on the first dataset. This is a good dataset to do so, as it is really general and it stores information on two big periods which include the amount of aircrashes per airline from 1985 to 1999 and from 2000 to 2014.
 
-
-```{r}
+```{r, echo=false}
 airline=read.csv("data/airline-safety.csv", header=TRUE)
 attach(airline)
-head(airline)
+print(names(airline))
 ```
 
-The data is in terms of incidents, fatal accidents and fatalities. With this dataset we can start testing how the flying industry has improved over the years, as a starting point for our reasearch.\\
-The data can be expressed as an experiment of individuals (in our case airlines) that are tested on two periods of time. Per experimental unit, we have amount of incidents, fatal accidents and fatalities. That is three numerical outcomes over two periods per experimental unit. On this dataset we will test the hypothesis that the difference on the mean between the two periods is 0. In other words, we will test if the amount of aerial accidents/fatalities remains unchanged over time, without neither improvement nor deterioration.
+The data is in terms of incidents, fatal accidents and fatalities. With this dataset, testing how the flying industry has improved over the years can be used as a starting point for our reasearch.\\
+The data can be expressed as an experiment of individuals (in this case airlines) that are tested on two periods of time. Per experimental unit, there are amount of incidents, fatal accidents and fatalities. That is three numerical outcomes over two periods per experimental unit. On this dataset the hypothesis that the difference on the mean between the two periods is 0 will be tested. In other words, the test will be the amount of aerial accidents/fatalities that remains unchanged over time without neither improvement nor deterioration.
 
 \subsection{Plots}
-```{r}
-boxplot(airline$incidents_85_99, airline$incidents_00_14)
+```{r echo=false}
+par(mfrow=c(1,3))
+boxplot(airline$incidents_85_99, airline$incidents_00_14, title="Indicents")
 boxplot(airline$fatal_accidents_85_99, airline$fatal_accidents_00_14)
 boxplot(airline$fatalities_85_99, airline$fatalities_00_14)
 ```
