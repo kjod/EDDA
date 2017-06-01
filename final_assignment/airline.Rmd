@@ -3,8 +3,8 @@ title: "Final Project, EDDA 2017"
 author: "Martin de la Riva(11403799) and Kieran O'Driscoll(11426438), Group 23"
 date: "01 June 2017"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
   word_document: default
 highlight: tango
 fontsize: 11pt
@@ -84,11 +84,12 @@ permutation_test = function(mystat, col1, col2){
     tstar[i]=mystat(temp[,1],temp[,2])
   }
   myt=mystat(col1,col2)
-  print(myt)
+  #print(myt)
   pl=sum(tstar<myt)/B
   pr=sum(tstar>myt)/B
   p=2*min(pl,pr)
-  print(p)
+  print(paste("Threshold: ", myt ,"P-value:", p))
+  #print(p)
 }
 mystat=function(x,y) {mean(x-y)}
 permutation_test(mystat, incidents_85_99, incidents_00_14)
@@ -142,20 +143,13 @@ From these preliminary experiments, the conclusion is that there has been a sign
 
 \section{Deeper Investigation}
 
-
-
-
-
-
-
-
 ```{r}
 airlines_data = read.csv("data/airline_data.csv", header=TRUE)
 ```
 
-#Data Cleaning
+\subsection{Data Cleaning}
 
-Due to the format of some of the data, The column "Date" needs to be cleaned as the data is agg
+Due to the format of some of the data, The column "Date" needs to be cleaned as the data needs to be aggregated by year. Also invalid entires need to be filtered out.
 
 ```{r}
 #delete Summary column
@@ -174,7 +168,19 @@ temp = as.Date(airlines_data$Date,'%m/%d/%Y')
 airlines_data$Date = format(temp,'%Y')
 ```
 
-#Setting up experiment
+\section{Data}
+%for Second data set
+\subsection{Data Distributions}
+To check what test can be applied, the distrubution of the data is checked. 
+
+```{r, echo=FALSE, fig.height = 3.5}
+par(mfrow=c(1,2))
+hist(airlines_data$Fatalities)
+qqnorm(airlines_data$Fatalities)
+```
+The data is clearly not normally distrubuted which will filter out any statistical test that is based on this assumption.
+
+\subsection{Setting up Experiments}
 To set up the experiment, a function was created to give data in the format where before and after columns could be created and used to test the research question. The function is given below:
 ```{r}
 setup_data <- function(date, range, data) {
@@ -195,7 +201,34 @@ setup_data <- function(date, range, data) {
 ```
 This function is created to aggregate the data for a year. This gives for each airline a before and after figure. This function is fed a year and range. The range selects the range plus and minus around the year given. The aim is to provide a data set where it can be determined if a plane crashes(the before column) are they more likely to crash in the near future(the after column). Serveal dates are used 1965, 1975, 1985 , 1995 and 2004. The range used will be 5 years.
 
-```{r}
-aggregate_data = setup_data(1965, 5, airlines_data)
-
+```{r include=FALSE}
+aggregate_data = setup_data(1973, 1, airlines_data)
 ```
+\subsection{Experiment}
+The expeiments are carries out on three year ranges 1955, 1975, 2004 with a range of 15, 10 and 5 applied repectively.
+\subsection{}
+```{r, echo=FALSE}
+year = 1955
+range = 15
+print(paste("Testing on year:", year, " Using range:", range))
+aggregate_data = setup_data(year, range, airlines_data)
+mystat=function(x,y) {mean(x-y)}
+print(permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after))
+
+year = 1975
+range = 10
+print(paste("Testing on year:", year, " Using range:", range))
+aggregate_data = setup_data(year, range, airlines_data)
+mystat=function(x,y) {mean(x-y)}
+print(permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after))
+
+year = 2004
+range = 5
+print(paste("Testing on year:", year, " Using range:", range))
+aggregate_data = setup_data(year, range, airlines_data)
+mystat=function(x,y) {mean(x-y)}
+print(permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after))
+```
+\subsection{Conclusions}
+
+\subsection{References}
