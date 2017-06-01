@@ -8,6 +8,7 @@ output:
   word_document: default
 highlight: tango
 fontsize: 11pt
+fig_height: 4
 ---
 
 \section{Introduction}
