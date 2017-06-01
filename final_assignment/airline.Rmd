@@ -10,28 +10,30 @@ highlight: tango
 fontsize: 11pt
 ---
 
-\section{Introduction}
+#Introduction
 %Reserach questions
 %Why is it important
 %Whats is in the data
 
 %Is a place a 
 
-Air travel increased by blah% in 2016 [reference] in the USA. However, what is relevant or significant when a crash occurs. In this paper this topic will be discussed. The first question that would be interesting is to check to see if a plane that crashes is more likely to crash in a periods after ther the crash. Also additional intresting questions to consinder are if the location of the crash is signicant and if the choice of plane manufacturer has an impact on the number of fatalities. 
-The datasets used to check this will be drawn from two sources. The first source is taken from the github repository of "fivethirtyeight" which contains some general airline saftey statistics from 1980s to 2010s. The second is drawn from the opendata.socrata site which contains more detailed data on airline statistics. 
+Air travel is increased by blah% in 2016 [reference] in the USA. However, what is relevant or significant when a crash occurs. In this paper this topic will be discussed. The first question that would be interesting is to check to see if a plane that crashes is more likely to crash in a periods after ther the crash. Also additional intresting questions to consinder are if the location of the crash is signicant and if the choice of plane manufacturer has an impact on the number of fatalities.
+
+\section{Hypotheses}
+
+In this experiments, we will test if airplane travelling has become safer with time, and it so in what measure. We will also check what causalities may infer in the increase or decrease of aerial incidents, in terms of location of crashes, manufacturers and time.\\
+But, besides these questions, the most important answer we want to clear is: Are airlines that have incidents more prone to have them again, or are they more likely to revert that possiblity?
+
+\section{Datasets}
+
+The datasets used to check this will be drawn from two sources. The first source is taken from the github repository of "fivethirtyeight" which contain airline saftey statistics. The second is drawn from the opendata.socrata site.
 
 %https://github.com/fivethirtyeight/data/blob/master/airline-safety/airline-safety.csv
 %https://opendata.socrata.com/Government/Airplane-Crashes-and-Fatalities-Since-1908/q2te-8cvq
 
-
-\section{Hypotheses}
-
-The research question is does the prior number of casualties of an airplane mean that this airplane is more likely to crash in the future. From this one question many subquestions will arise such as has air travel become safer with time, how the amount of causalities are affected by the location of crashes, manufacturers and the year of teh crash
-
 \section{Preliminary tests}
 
-Firstly, some preliminary tests are conducted on ethe first dataset. This is a good dataset to do so, as it is really general and it stores information on big periods. It includes the amount of aircrashes per airline in two periods. The first period is from 1985 to 1999, and the second period from 2000 to 2014.
-
+We will first do some preliminary tests on our first dataset. This is a good dataset to do so, as it is really general and it stores information on big periods. It includes the amount of aircrashes per airline in two periods. The first period is from 1985 to 1999, and the second period from 2000 to 2014.
 
 ```{r}
 airline=read.csv("data/airline-safety.csv", header=TRUE)
@@ -95,7 +97,7 @@ permutation_test = function(mystat, col1, col2){
   print(p)
 }
 mystat=function(x,y) {mean(x-y)}
-permutation_test(mystat, airline$incidents_85_99, airline$incidents_00_14)
+permutation_test(mystat, incidents_85_99, incidents_00_14)
 ```
 
 The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, we can conclude that there is a significant difference between both periods in terms of number of incidents.
@@ -119,7 +121,7 @@ hist(fatal[fatal<7])
 In this case, even after removing the outliers a Normal Distribution cannot be definitively assumed. Therefore, we will perform only a Permutation Test for this case:
 
 ```{r}
-permutation_test(mystat, airline$fatal_accidents_85_99, airline$fatal_accidents_00_14)
+permutation_test(mystat, fatal_accidents_85_99, fatal_accidents_00_14)
 ```
 
 Again, the test on Fatal Accidents clearly shows that there is a significant difference between both periods.
@@ -147,36 +149,39 @@ From these preliminary experiments, we can conclude that there has been a signif
 \section{Deeper Investigation}
 
 
-#provide referenece
-\section{Setting Up Experiment}
 
 
-```{r, include=FALSE}
+
+
+
+
+```{r}
 airlines_data = read.csv("data/airline_data.csv", header=TRUE)
 ```
 
-\section{Data}
-%for Second data set
-\subsection{Data Distributions}
-To check what test can be applied, the distrubution of the data is checked. 
+#Data Cleaning
 
-```{r}
-par(mfrow=c(1,2))
-hist(airlines_data$Fatalities)
-qqnorm(airlines_data$Fatalities)
-```
-The data is clearly not normally distrubuted which will filter out any statistical test that is based on this assumption.
-
-\subsection{Data Cleaning}
 Due to the format of some of the data, The column "Date" needs to be cleaned as the data is agg
+
 ```{r}
-airlines_selection_data = airlines_data[airlines_data$Classification == "Non Military",]
-temp = as.Date(airlines_selection_data$Date,'%m/%d/%Y')
-airlines_selection_data['Date'] = format(temp,'%Y')
+#delete Summary column
+airlines_data=airlines_data[ , !(names(airlines_data)=='Summary')]
+#transform Location column into countries
+library(stringr)
+temp=str_split_fixed(airlines_data$Location, ", ", 2)
+countries=temp[,2]
+airlines_data$Location=countries
+#delete Empty Locations
+airlines_data = airlines_data[!airlines_data$Location=="",]
+#delete Military data
+airlines_data = airlines_data[airlines_data$Classification=="Non Military",]
+#transform Date to Years
+temp = as.Date(airlines_data$Date,'%m/%d/%Y')
+airlines_data$Date = format(temp,'%Y')
 ```
 
-\subsection{Setting up experiment}
-To set up the experiment, a function was created to give data in the format where before and after columns could be created and used to test the research question. Also created is a function to carry out a permutation test. The functions are given below:
+#Setting up experiment
+To set up the experiment, a function was created to give data in the format where before and after columns could be created and used to test the research question. The function is given below:
 ```{r}
 setup_data <- function(date, range, data) {
     airlines = unique(data$Operator[data$Date == date])#remove filter to include airlines that didn't crash
@@ -193,39 +198,10 @@ setup_data <- function(date, range, data) {
     }
     return(df)
 }
-
-permutation_test <- function(mystat, col1, col2){
-  B=1000
-  tstar=numeric(B)
-  for (i in 1:B){
-    temp=t(apply(cbind(col1,col2),1,sample))
-    tstar[i]=mystat(temp[,1],temp[,2])
-  }
-  myt=mystat(col1,col2)
-  print(myt)
-  pl=sum(tstar<myt)/B
-  pr=sum(tstar>myt)/B
-  p=2*min(pl,pr)
-  print(p)
-}
-
 ```
-This function setup_data is created to aggregate the data for a year. This gives for each airline a before and after figure. This function is fed a year and range. The range selects the range plus and minus around the year given. The aim is to provide a data set where it can be determined if a plane crashes(the before column) are they more likely to crash in the near future(the after column). Serveal dates are used 1965, 1975, 1985 , 1995 and 2004. The range used will be 5 years.
-
-```{r, include=False}
-aggregate_data = setup_data(2004, 5, airlines_selection_data)
-```
+This function is created to aggregate the data for a year. This gives for each airline a before and after figure. This function is fed a year and range. The range selects the range plus and minus around the year given. The aim is to provide a data set where it can be determined if a plane crashes(the before column) are they more likely to crash in the near future(the after column). Serveal dates are used 1965, 1975, 1985 , 1995 and 2004. The range used will be 5 years.
 
 ```{r}
-
-mystat=function(x,y) {mean(x-y)}
-permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
-```
-#boxplot(airlines_selection_data$Fat, airline$fatal_accidents_00_14)
-#boxplot(airlines_selection_data$fatalities_85_99, airline$fatalities_00_14)
-```{r, echo=false}
-  ### Permutation Tests (lecture 4) - No Normal distribution
+aggregate_data = setup_data(1965, 5, airlines_selection_data)
 
 ```
-
-\section{References}
