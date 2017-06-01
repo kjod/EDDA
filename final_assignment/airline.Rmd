@@ -3,8 +3,8 @@ title: "Final Project, EDDA 2017"
 author: "Martin de la Riva(11403799) and Kieran O'Driscoll(11426438), Group 23"
 date: "01 June 2017"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 highlight: tango
 fontsize: 11pt
@@ -37,7 +37,7 @@ The data is in terms of incidents, fatal accidents and fatalities. With this dat
 The data can be expressed as an experiment of individuals (in this case airlines) that are tested on two periods of time. There are three experimental units that can be tested to confirm the hypothesis which include: teh amount of incidents, fatal accidents and fatalities. On this dataset the hypothesis that the difference on the mean between the two periods is 0 will be tested. In other words, the test will be the amount of aerial accidents/fatalities that remain unchanged over time without neither improvement nor deterioration.
 
 \section{Data}
-First, the data will be explored to check what insghts can be drawn.
+First, the data will be explored to check what insights can be drawn.
 
 ```{r echo=FALSE, fig.height = 3}
 par(mfrow=c(1,3))
@@ -204,14 +204,15 @@ lines(lowess(accidents_per_year$Var1,accidents_per_year$Freq), col="blue")
 
 The plot above shows the amount of accidents per year. It reveals the improvement on airflight technology over time leading to more flights occuring but also the lack of saftey standards in the early 90s gives a growth in number of accidents as air travel becomes more popular. The amount of accidents seems to stabalize at the around the 1970s in which from this point onwards only a slight decrease in accidents can be seen.
 
-To check what test can be applied, the distrubution of the data is checked. 
+To check what test can be applied, the distribution of the data is checked. 
 
 ```{r, echo=FALSE, fig.height = 2.5}
 par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
 qqnorm(airlines_data$Fatalities, xlab="", ylab="")
 hist(airlines_data$Fatalities, xlab="", ylab="")
 ```
-The data is clearly not normally distrubuted which will filter out any statistical test that is based on this assumption. In this case a permuation test will be used, however to do this the data needs to be formatted in such away in which it has two groups of experimental units.
+
+The data is clearly not normally distributed which will filter out any statistical test that is based on this assumption. In this case a permuation test will be used, however to do this the data needs to be formatted in such away in which it has two groups of experimental units.
 
 \section{Setting up Experiments}
 To set up the experiment, a function was created to format data into two groups of experimental units, \textit{before} and \textit{after}. The function will also allow for experimentation with different ranges years thus altering the time period in which the \textit{before} and \textit{after} columns would cover. The function is given below:
@@ -261,6 +262,7 @@ print(paste("Testing on year:", year, " Using range:", range))
 aggregate_data = setup_data(year, range, airlines_data)
 permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
 ```
+
 The p-value returns zero for both years 1975 and 2004 using ranges 10 and 5 respectively. However, 1955 with a big range of 15 years returns a p-value of 0.322. This could be because of the date 1955, air transport could have been becoming a more affordable options which in turn could have led to more crashes.
 
 To test this, the test is run again and the range is shortened for the year 1955 to both 10 and 5. Also the year 1975 is taken with a range of 15 to check the impact that the range of years has on the result.  
@@ -292,7 +294,7 @@ permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggreg
 
 ```
 
-From this, two conclusions can be drawn. One that the range used has a impact on the p-value, this is seeb in 1975 has the p-value increase but only by a small amount. Secondly, the date 1955 seems significant. After some research it was found that the period from 1950s and 1960s is known as the golden age in aviation \cite{goldenage}. This reminiscent of the graph produced in the Data section as air travel became a much more affordable option for people to persue but lacked many of the saftey standards implemeted today lead to increase in the number of accidents. This would in theroy make the risk of crashing higher however this would have to be investigated further.
+From this, two conclusions can be drawn. One that the range used has a impact on the p-value, this is seeb in 1975 has the p-value increase but only by a small amount. Secondly, the date 1955 seems significant. After some research it was found that the period from 1950s and 1960s is known as the golden age in aviation \cite{goldenage}. This reminiscent of the graph produced in the Data section as air travel became a much more affordable option for people to persue but lacked many of the safety standards implemeted today lead to increase in the number of accidents. This would in theroy make the risk of crashing higher however this would have to be investigated further.
 
 Seeing as the data-set is quite big, one year will be used to see if a particular manufacturer or location alter the probablity of having a crash. In this case, 1955 will be checked. The data for this is displayed below to see if the normal assunmption is true. Also only tests that are checked agianst \textit{Fatalties} will be used.
 
@@ -308,7 +310,8 @@ par(mfrow=c(1,2))
 hist(temp_data$Fatalities)
 qqnorm(temp_data$Fatalities)
 ```
-Data is not normally distrubuted so therefoe cannot use anova, therefore Will use a a non-parametric test specifically the Kruskal-Wallis test.
+
+Data is not normally distribute, therefore cannot use anova. A non-parametric test will then be performed, specifically the Kruskal-Wallis test.
 
 ```{r}
 print("Manufacturer")
@@ -316,6 +319,7 @@ print(kruskal.test(temp_data$Aircraft.Manufacturer,temp_data$Fatalities))
 print("Location")
 print(kruskal.test(temp_data$Location,temp_data$Fatalities))
 ```
+
 For the year 1955, neither the \textit{Location} nor the \textit{Manufacturer} turned out to be significant when compared against \textit{Fatalaties} with both p-values being above 0.05. 
 
 \section{Conclusions} 
