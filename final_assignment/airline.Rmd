@@ -140,7 +140,7 @@ Again, the test on \textit{Fatal Accidents} clearly shows that there is a signif
 
 \subsection{Fatalities}
 
-```{r include=False}
+```{r include=FALSE}
 airline=read.csv("data/airline-safety.csv", header=TRUE)
 airline = airline[fatalities_85_99>0,]
 attach(airline)
@@ -204,14 +204,15 @@ lines(lowess(accidents_per_year$Var1,accidents_per_year$Freq), col="blue")
 
 The plot above shows the amount of accidents per year. It reveals the improvement on airflight technology over time leading to more flights occuring but also the lack of saftey standards in the early 90s gives a growth in number of accidents as air travel becomes more popular. The amount of accidents seems to stabalize at the around the 1970s in which from this point onwards only a slight decrease in accidents can be seen.
 
-To check what test can be applied, the distrubution of the data is checked. 
+To check what test can be applied, the distribution of the data is checked. 
 
 ```{r, echo=FALSE, fig.height = 2.5}
 par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
 qqnorm(airlines_data$Fatalities, xlab="", ylab="")
 hist(airlines_data$Fatalities, xlab="", ylab="")
 ```
-The data is clearly not normally distrubuted which will filter out any statistical test that is based on this assumption. In this case a permuation test will be used, however to do this the data needs to be formatted in such away in which it has two groups of experimental units.
+
+The data is clearly not normally distributed which will filter out any statistical test that is based on this assumption. In this case a permuation test will be used, however to do this the data needs to be formatted in such away in which it has two groups of experimental units.
 
 \section{Setting up Experiments}
 To set up the experiment, a function was created to format data into two groups of experimental units, \textit{before} and \textit{after}. The function will also allow for experimentation with different ranges years thus altering the time period in which the \textit{before} and \textit{after} columns would cover. The function is given below:
@@ -308,7 +309,8 @@ par(mfrow=c(1,2))
 hist(temp_data$Fatalities)
 qqnorm(temp_data$Fatalities)
 ```
-Data is not normally distrubuted so therefoe cannot use anova, therefore Will use a a non-parametric test specifically the Kruskal-Wallis test.
+
+Data is not normally distribute, therefore cannot use anova. A non-parametric test will then be performed, specifically the Kruskal-Wallis test.
 
 ```{r}
 print("Manufacturer")
@@ -316,6 +318,7 @@ print(kruskal.test(temp_data$Aircraft.Manufacturer,temp_data$Fatalities))
 print("Location")
 print(kruskal.test(temp_data$Location,temp_data$Fatalities))
 ```
+
 For the year 1955, neither the \textit{Location} nor the \textit{Manufacturer} turned out to be significant when compared against \textit{Fatalaties} with both p-values being above 0.05. 
 
 \section{Conclusions} 
