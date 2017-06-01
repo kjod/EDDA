@@ -10,6 +10,7 @@ highlight: tango
 fontsize: 11pt
 fig_height: 2
 ---
+
 \section{Introduction}
 
 Air travel is one of the most widely used modes of transport and also one of the fastest. However, once an airline crashes it tends to have a significant impact on consumer's confidence for travelling with that airline. This was the case with Malysian Airline in \cite{avoid} effectively forcing the airline to reband itself to stay in business. 
@@ -205,10 +206,10 @@ The plot above shows the amount of accidents per year. It reveals the improvemen
 
 To check what test can be applied, the distrubution of the data is checked. 
 
-```{r, echo=FALSE, fig.height = 3.5}
-par(mfrow=c(1,2))
-hist(airlines_data$Fatalities)
-qqnorm(airlines_data$Fatalities)
+```{r, echo=FALSE, fig.height = 2.5}
+par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
+qqnorm(airlines_data$Fatalities, xlab="", ylab="")
+hist(airlines_data$Fatalities, xlab="", ylab="")
 ```
 The data is clearly not normally distrubuted which will filter out any statistical test that is based on this assumption. In this case a permuation test will be used, however to do this the data needs to be formatted in such away in which it has two groups of experimental units.
 
@@ -291,10 +292,10 @@ permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggreg
 
 ```
 
-
 From this, two conclusions can be drawn. One that the range used has a impact on the p-value, this is seeb in 1975 has the p-value increase but only by a small amount. Secondly, the date 1955 seems significant. After some research it was found that the period from 1950s and 1960s is known as the golden age in aviation \cite{goldenage}. This reminiscent of the graph produced in the Data section as air travel became a much more affordable option for people to persue but lacked many of the saftey standards implemeted today lead to increase in the number of accidents. This would in theroy make the risk of crashing higher however this would have to be investigated further.
 
 Seeing as the data-set is quite big, one year will be used to see if a particular manufacturer or location alter the probablity of having a crash. In this case, 1955 will be checked. The data for this is displayed below to see if the normal assunmption is true. Also only tests that are checked agianst \textit{Fatalties} will be used.
+
 ```{r, include=FALSE}
 myvars <- c("Date", "Location", "Fatalities", "Aircraft.Manufacturer")
 temp_data <- airlines_data
