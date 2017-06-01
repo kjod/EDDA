@@ -194,7 +194,7 @@ airlines_data$Date = format(temp,'%Y')
 \section{Data}
 
 ```{r, echo=FALSE}
-accidents_per_year = data.frame(table(air$Date))
+accidents_per_year = data.frame(table(airlines_data$Date))
 plot(accidents_per_year)
 lines(lowess(accidents_per_year$Var1,accidents_per_year$Freq), col="blue")
 ```
