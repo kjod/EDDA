@@ -3,12 +3,12 @@ title: "Final Project, EDDA 2017"
 author: "Martin de la Riva(11403799) and Kieran O'Driscoll(11426438), Group 23"
 date: "01 June 2017"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 highlight: tango
 fontsize: 11pt
-fig_height: 4
+fig_height: 2
 ---
 
 \section{Introduction}
@@ -43,7 +43,7 @@ The data is in terms of incidents, fatal accidents and fatalities. With this dat
 The data can be expressed as an experiment of individuals (in this case airlines) that are tested on two periods of time. Per experimental unit, there are amount of incidents, fatal accidents and fatalities. That is three numerical outcomes over two periods per experimental unit. On this dataset the hypothesis that the difference on the mean between the two periods is 0 will be tested. In other words, the test will be the amount of aerial accidents/fatalities that remains unchanged over time without neither improvement nor deterioration.
 
 \subsection{Plots}
-```{r echo=FALSE}
+```{r echo=FALSE, fig.height = 3}
 par(mfrow=c(1,3))
 boxplot(airline$incidents_85_99, airline$incidents_00_14, names=c("1985-1999","2000-2014"), ylab ="Incidents", xlab ="Years")
 boxplot(airline$fatal_accidents_85_99, airline$fatal_accidents_00_14, names=c("1985-1999","2000-2014"), ylab ="Accidents", xlab ="Years")
@@ -56,7 +56,7 @@ Looking at the boxplots, of the three numerical outcomes, it does seem that the 
 
 Firstly, to test the hypothesis on the numerical outcome Incidents. As the experimental units are individuals, we can apply a Two-Paired test, assuming the difference between the periods comes from a normal distribution.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.height = 4}
 par(mfrow=c(1,2))
 qqnorm(incidents_85_99-incidents_00_14)
 hist(incidents_85_99-incidents_00_14)
@@ -64,7 +64,7 @@ hist(incidents_85_99-incidents_00_14)
 
 Unluckily, this assumption cannot be applied to this data due to the two big outliers. If the outliers are eliminate though, one can clearly see an underlying Normal Distribution.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.height = 4}
 insad=incidents_85_99-incidents_00_14
 par(mfrow=c(1,2))
 qqnorm(insad[insad<15])
@@ -102,7 +102,7 @@ permutation_test(mystat, incidents_85_99, incidents_00_14)
 The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, it can be concluded that there is a significant difference between both periods in terms of the number of incidents.
 
 \subsection{Fatal Accidents}
-```{r, echo=False}
+```{r, echo=FALSE, fig.height = 4}
 par(mfrow=c(1,2))
 qqnorm(fatal_accidents_85_99-fatal_accidents_00_14)
 hist(fatal_accidents_85_99-fatal_accidents_00_14)
@@ -110,7 +110,7 @@ hist(fatal_accidents_85_99-fatal_accidents_00_14)
 
 In terms of Fatal Accidents, there is a similar state as before. The plots do not seem to resemble a Normal Distribution, although it may be caused by the clearly detectable outliers. Therefore, the distribution will be checked after getting rid of these outliers:
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.height = 4}
 fatal=fatal_accidents_85_99-fatal_accidents_00_14
 par(mfrow=c(1,2))
 qqnorm(fatal[fatal<7])
@@ -127,7 +127,7 @@ Again, the test on Fatal Accidents clearly shows that there is a significant dif
 
 \subsection{Fatalities}
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.height = 4}
 par(mfrow=c(1,2))
 qqnorm(fatalities_85_99-fatalities_00_14)
 hist(fatalities_85_99-fatalities_00_14)
@@ -201,6 +201,6 @@ setup_data <- function(date, range, data) {
 This function is created to aggregate the data for a year. This gives for each airline a before and after figure. This function is fed a year and range. The range selects the range plus and minus around the year given. The aim is to provide a data set where it can be determined if a plane crashes(the before column) are they more likely to crash in the near future(the after column). Serveal dates are used 1965, 1975, 1985 , 1995 and 2004. The range used will be 5 years.
 
 ```{r}
-aggregate_data = setup_data(1965, 5, airlines_selection_data)
+aggregate_data = setup_data(1965, 5, airlines_data)
 
 ```
