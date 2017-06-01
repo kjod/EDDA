@@ -49,3 +49,12 @@ permutation_test(mystat, airline$incidents_85_99, airline$incidents_00_14)
 qqnorm(fatal_accidents_85_99-fatal_accidents_00_14)
 hist(fatal_accidents_85_99-fatal_accidents_00_14)
 permutation_test(mystat, airline$fatal_accidents_85_99, airline$fatal_accidents_00_14)
+
+
+
+
+
+
+
+###Do airlines improve after an accident?
+airline = airline[incidents_85_99>0,]

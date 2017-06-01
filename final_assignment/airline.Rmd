@@ -50,6 +50,15 @@ Looking at the boxplots, of the three numerical outcomes, it does seem that the 
 
 Firstly, to test the hypothesis on the numerical outcome \textit{Incidents}, the Two-Paired test can be applied as the experimental units are individuals however this is assuming that the difference between the periods comes from a normal distribution.
 
+Firstly, the instances in the data that had 0 \textit{Incidents} in the first period will be removed.
+```{r}
+airline=read.csv("data/airline-safety.csv", header=TRUE)
+airline = airline[incidents_85_99>0,]
+attach(airline)
+```
+
+As the experimental units are individuals, we can apply a Two-Paired test, assuming the difference between the periods comes from a normal distribution.
+
 ```{r, echo=FALSE, fig.height = 2.5}
 par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
 qqnorm(incidents_85_99-incidents_00_14, xlab="", ylab="")
@@ -58,7 +67,8 @@ hist(incidents_85_99-incidents_00_14, xlab="", ylab="")
 
 Unforunately, this assumption cannot be applied to this data due to two big outliers. If the outliers are eliminated, one can clearly see an underlying Normal Distribution.
 
-```{r, echo=FALSE, fig.height = 2.5}
+```{r, includes=FALSE, fig.height = 2.5} 
+#@Martin Check if this relevant
 incidents_difference=incidents_85_99-incidents_00_14
 par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
 qqnorm(incidents_difference[incidents_difference<15], xlab="", ylab="")
@@ -97,6 +107,12 @@ permutation_test(mystat, incidents_85_99, incidents_00_14)
 The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, it can be concluded that there is a significant difference between both periods in terms of the number of \textit{Incidents}.
 
 \subsection{Fatal Accidents}
+
+```{r}
+airline=read.csv("data/airline-safety.csv", header=TRUE)
+airline = airline[fatal_accidents_85_99>0,]
+attach(airline)
+```
 ```{r, echo=FALSE, fig.height = 2.5}
 par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
 qqnorm(fatal_accidents_85_99-fatal_accidents_00_14, xlab="", ylab="")
@@ -122,6 +138,11 @@ Again, the test on \textit{Fatal Accidents} clearly shows that there is a signif
 
 \subsection{Fatalities}
 
+```{r}
+airline=read.csv("data/airline-safety.csv", header=TRUE)
+airline = airline[fatalities_85_99>0,]
+attach(airline)
+```
 ```{r, echo=FALSE, fig.height = 2.5}
 par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
 qqnorm(fatalities_85_99-fatalities_00_14, xlab="", ylab="")
@@ -135,6 +156,7 @@ t.test(fatalities_85_99, fatalities_00_14, paired=TRUE)
 ```
 
 There seems to be a significant difference between the \textit{Fatalities} in the 20th century and the 21st century with the first being significantly higher (with a confidence interval between 9 and 105 instances bigger), following the results on the previous tests.
+
 
 \subsection{Conclusion on preliminary experiments}
 
@@ -150,9 +172,11 @@ airlines_data = read.csv("data/airline_data.csv", header=TRUE)
 
 Due to the format of some of the data, some small data cleaning had to be performed. The column \textit{Date} needs to be cleaned as the data needs to be aggregated by year for the statiscal test. Also invalid entires need to be filtered out along with any miltary crashes.
 
-```{r}
+```{r, echo=FALSE}
 #delete Summary column
 airlines_data=airlines_data[ , !(names(airlines_data)=='Summary')]
+```
+```{r}
 #transform Location column into countries
 library(stringr)
 temp=str_split_fixed(airlines_data$Location, ", ", 2)
@@ -168,6 +192,15 @@ airlines_data$Date = format(temp,'%Y')
 ```
 
 \section{Data}
+
+```{r, echo=FALSE}
+accidents_per_year = data.frame(table(air$Date))
+plot(accidents_per_year)
+lines(lowess(accidents_per_year$Var1,accidents_per_year$Freq), col="blue")
+```
+
+The plot above shows the amount of accidents per year. It reveals how, with the improvement on airflight technology, the amounts of flights augmented, leading to a growth in number of accident as well. It could be hypothesized that this is due to a lack of security on a non yet polished industry. The amount of accidents seems to stablish at the middle of the plot, until the end of it, in which a slight decrease in accidents can be perceived.
+
 To check what test can be applied, the distrubution of the data is checked. 
 
 ```{r, echo=FALSE, fig.height = 3.5}
@@ -177,7 +210,7 @@ qqnorm(airlines_data$Fatalities)
 ```
 The data is clearly not normally distrubuted which will filter out any statistical test that is based on this assumption. In this case a permuation test will be used, however to do this the data needs to be formatted in such away in which it has two groups of experimental units.
 
-\subsection{Setting up Experiments}
+\section{Setting up Experiments}
 To set up the experiment, a function was created to format data into two groups of experimental units, \textit{before} and \textit{after}. The function will also allow for experimentation with different ranges years thus altering the time period in which the \textit{before} and \textit{after} columns would cover. The function is given below:
 ```{r}
 setup_data <- function(date, range, data) {
@@ -201,9 +234,10 @@ This function is created to aggregate the data for a year. This gives for each a
 ```{r include=FALSE}
 aggregate_data = setup_data(1973, 1, airlines_data)
 ```
-\subsection{Experiment}
+
+\section{Experiment}
 The experiments are carried out on three years 1955, 1975, 2004 with ranges of 15, 10 and 5 applied repectively. This allows for experimentation with years and experimentation with the ranges.
-\subsection{}
+
 ```{r, echo=FALSE}
 year = 1955
 range = 15
@@ -258,6 +292,8 @@ permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggreg
 From this, two conclusions van be drawn. One that the range used has a impact on the p-value, this is seeb in 1975 has the p-value increase but only by a small amount. Secondly, the date 1955 seems significant. After some research it was found that the period from 1950s and 1960s is known as the golden age in aviation \cite{goldenage}. Air travel became a much more affordable option for people to persue but lacked many of the saftey standards implemeted today. This could make the risk of crashing higher however this would have to be investigated further.
 
 \section{Conclusions}
+STILL TODO, THAT IS ONLY ONE PART OF THE CONCLUSION
+Although it would have been nice to apply more advanced data analysis tests (such as 2-way ANOVA), the type of tests to be applied on you experiments highly depends on the data you harvest and the design of your experiment. After going for these datasets we found that some tests were not applicable, or could be massively extensive if applied. Such is the case with 2-way ANOVA, in case we tested at the same time the relevance of Manufacturer and Location, as we would encounter with more than one hundred unique elements (levels) per factor.
 
 
 
