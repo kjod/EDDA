@@ -10,6 +10,7 @@ highlight: tango
 fontsize: 11pt
 fig_height: 2
 ---
+
 \section{Introduction}
 
 Air travel is one of the most widely used modes of transport and also one of the fastest. However, once an airline crashes it tends to have a significant impact on consumer's confidence for travelling with that airline. This was the case with Malysian Airline in \cite{avoid} effectively forcing the airline to reband itself to stay in business. 
@@ -37,6 +38,7 @@ The data can be expressed as an experiment of individuals (in this case airlines
 
 \section{Data}
 First, the data will be explored to check what insghts can be drawn.
+
 ```{r echo=FALSE, fig.height = 3}
 par(mfrow=c(1,3))
 boxplot(airline$incidents_85_99, airline$incidents_00_14, names=c("1985-1999","2000-2014"), ylab ="Incidents", xlab ="Years")
@@ -138,7 +140,7 @@ Again, the test on \textit{Fatal Accidents} clearly shows that there is a signif
 
 \subsection{Fatalities}
 
-```{r}
+```{r include=False}
 airline=read.csv("data/airline-safety.csv", header=TRUE)
 airline = airline[fatalities_85_99>0,]
 attach(airline)
@@ -163,6 +165,7 @@ There seems to be a significant difference between the \textit{Fatalities} in th
 From these preliminary experiments, the conclusion is that there has been a significant improvement in flight saftey from the 20th to the 21st century and that an airline that has crashed in not a indication that they are likely to crash again. However, this experiment has used data only from two periods where the period, in this case 10 years, might be two small or two big. Therefore in the next section, different year periods will be used along with additional information such as manufatuer and location of crash. With this improvement, a deeper experiment can be carried out.
 
 \section{Deeper Investigation}
+
 The second data set contains 21 columns with over 500 entries. The data-set contains data from 1908 to 2009 with airplane crashes from commercial airlines and miltary planes. For this experiment, only commercial airlines will be consindered and only the columns \textit{Date, Operator, Manufacturer} and \textit{Location} will be used. \textit{Operator} in this data-set is the Airline of the plane that crashed.   
 ```{r}
 airlines_data = read.csv("data/airline_data.csv", header=TRUE)
@@ -199,7 +202,7 @@ plot(accidents_per_year)
 lines(lowess(accidents_per_year$Var1,accidents_per_year$Freq), col="blue")
 ```
 
-The plot above shows the amount of accidents per year. It reveals how, with the improvement on airflight technology, the amounts of flights augmented, leading to a growth in number of accident as well. It could be hypothesized that this is due to a lack of security on a non yet polished industry. The amount of accidents seems to stablish at the middle of the plot, until the end of it, in which a slight decrease in accidents can be perceived.
+The plot above shows the amount of accidents per year. It reveals the improvement on airflight technology over time leading to more flights occuring but also the lack of saftey standards in the early 90s gives a growth in number of accidents as air travel becomes more popular. The amount of accidents seems to stabalize at the around the 1970s in which from this point onwards only a slight decrease in accidents can be seen.
 
 To check what test can be applied, the distrubution of the data is checked. 
 
@@ -289,17 +292,36 @@ permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggreg
 
 ```
 
-From this, two conclusions van be drawn. One that the range used has a impact on the p-value, this is seeb in 1975 has the p-value increase but only by a small amount. Secondly, the date 1955 seems significant. After some research it was found that the period from 1950s and 1960s is known as the golden age in aviation \cite{goldenage}. Air travel became a much more affordable option for people to persue but lacked many of the saftey standards implemeted today. This could make the risk of crashing higher however this would have to be investigated further.
+From this, two conclusions can be drawn. One that the range used has a impact on the p-value, this is seeb in 1975 has the p-value increase but only by a small amount. Secondly, the date 1955 seems significant. After some research it was found that the period from 1950s and 1960s is known as the golden age in aviation \cite{goldenage}. This reminiscent of the graph produced in the Data section as air travel became a much more affordable option for people to persue but lacked many of the saftey standards implemeted today lead to increase in the number of accidents. This would in theroy make the risk of crashing higher however this would have to be investigated further.
 
-\subsection{which other factors may influence?}
-A test will be reproduced to test wether unexpected factors may have an influence on the amounts of accidents. Manufacturer is one factor that may have an influence. Therefore, the data will be grouped on accidents per Manufacturer. For these tests, only data from 1980 on advance will be taken into acount, counting only on modern aircrafts. Also, the difference in the amount of accidents between the previous decades could corrupt our data.
+Seeing as the data-set is quite big, one year will be used to see if a particular manufacturer or location alter the probablity of having a crash. In this case, 1955 will be checked. The data for this is displayed below to see if the normal assunmption is true. Also only tests that are checked agianst \textit{Fatalties} will be used.
 
+```{r, include=FALSE}
+myvars <- c("Date", "Location", "Fatalities", "Aircraft.Manufacturer")
+temp_data <- airlines_data
+temp_data = temp_data[temp_data$Date == "1955",]
+temp_data$Location = as.factor(temp_data$Location)
+temp_data$Aircraft.Manufacturer = as.factor(temp_data$Aircraft.Manufacturer)
+```
+```{r, echo=FALSE}
+par(mfrow=c(1,2))
+hist(temp_data$Fatalities)
+qqnorm(temp_data$Fatalities)
+```
+Data is not normally distrubuted so therefoe cannot use anova, therefore Will use a a non-parametric test specifically the Kruskal-Wallis test.
 
-\section{Conclusions}
-STILL TODO, THAT IS ONLY ONE PART OF THE CONCLUSION
-Although it would have been nice to apply more advanced data analysis tests (such as 2-way ANOVA), the type of tests to be applied on you experiments highly depends on the data you harvest and the design of your experiment. After going for these datasets we found that some tests were not applicable, or could be massively extensive if applied. Such is the case with 2-way ANOVA, in case we tested at the same time the relevance of Manufacturer and Location, as we would encounter with more than one hundred unique elements (levels) per factor.
+```{r}
+print("Manufacturer")
+print(kruskal.test(temp_data$Aircraft.Manufacturer,temp_data$Fatalities))
+print("Location")
+print(kruskal.test(temp_data$Location,temp_data$Fatalities))
+```
+For the year 1955, neither the \textit{Location} nor the \textit{Manufacturer} turned out to be significant when compared against \textit{Fatalaties} with both p-values being above 0.05. 
 
+\section{Conclusions} 
+Although it would have been nice to apply more advanced data analysis tests (such as 2-way ANOVA), the type of tests to be applied on the experiments is highly dependent on the data you collect and the design of the experiment. After using these datasets, it was found that some tests were not applicable, or could be computationally extensive if applied as multiple columns had over 2000 factors. An exampel of this is if 2-way ANOVA was used. In this case if the relevance of Manufacturer and Location was tested as the same time, more than one hundred unique elements (levels) per factor would be encountered. Some additional, faults with the test performed include the fact that they 
 
+In saying this, it is the belief that hypoyhesis provied is largely proved to be correct but it is highly depenedent on the time period choosen. From the research, it is also shown that air accidents are less likely to occur over time thus making a plane that crashed less likely to crash in the future. Future work would include the investigation of weather patterns in different locations and their significance on the liklihood a plane crashes.
 
 \begin{thebibliography}{9}
   \bibitem{avoid} 
