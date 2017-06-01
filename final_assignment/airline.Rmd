@@ -97,7 +97,7 @@ permutation_test = function(mystat, col1, col2){
   print(p)
 }
 mystat=function(x,y) {mean(x-y)}
-permutation_test(mystat, airline$incidents_85_99, airline$incidents_00_14)
+permutation_test(mystat, incidents_85_99, incidents_00_14)
 ```
 
 The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, we can conclude that there is a significant difference between both periods in terms of number of incidents.
@@ -121,7 +121,7 @@ hist(fatal[fatal<7])
 In this case, even after removing the outliers a Normal Distribution cannot be definitively assumed. Therefore, we will perform only a Permutation Test for this case:
 
 ```{r}
-permutation_test(mystat, airline$fatal_accidents_85_99, airline$fatal_accidents_00_14)
+permutation_test(mystat, fatal_accidents_85_99, fatal_accidents_00_14)
 ```
 
 Again, the test on Fatal Accidents clearly shows that there is a significant difference between both periods.
@@ -159,18 +159,25 @@ From these preliminary experiments, we can conclude that there has been a signif
 airlines_data = read.csv("data/airline_data.csv", header=TRUE)
 ```
 
-
-```{r}
-
-```
-
-
 #Data Cleaning
-Due to teh format of some of the data, The column "Date" needs to be cleaned as the data is agg
+
+Due to the format of some of the data, The column "Date" needs to be cleaned as the data is agg
+
 ```{r}
-airlines_selection_data = airlines_data[airlines_data$Classification == "Non Military"]
-temp = as.Date(airlines_selection_data$Date,'%m/%d/%Y')
-airlines_selection_data['Date'] = format(temp,'%Y')
+#delete Summary column
+airlines_data=airlines_data[ , !(names(airlines_data)=='Summary')]
+#transform Location column into countries
+library(stringr)
+temp=str_split_fixed(airlines_data$Location, ", ", 2)
+countries=temp[,2]
+airlines_data$Location=countries
+#delete Empty Locations
+airlines_data = airlines_data[!airlines_data$Location=="",]
+#delete Military data
+airlines_data = airlines_data[airlines_data$Classification=="Non Military",]
+#transform Date to Years
+temp = as.Date(airlines_data$Date,'%m/%d/%Y')
+airlines_data$Date = format(temp,'%Y')
 ```
 
 #Setting up experiment
