@@ -8,7 +8,7 @@ output:
   word_document: default
 highlight: tango
 fontsize: 11pt
-fig_height: 3
+fig_height: 2
 ---
 
 \section{Introduction}
@@ -51,7 +51,7 @@ Looking at the boxplots, of the three numerical outcomes, it does seem that the 
 
 Firstly, to test the hypothesis on the numerical outcome Incidents. As the experimental units are individuals, we can apply a Two-Paired test, assuming the difference between the periods comes from a normal distribution.
 
-```{r, echo=FALSE, fig.height = 4}
+```{r, echo=FALSE, fig.height = 3.5}
 par(mfrow=c(1,2))
 qqnorm(incidents_85_99-incidents_00_14)
 hist(incidents_85_99-incidents_00_14)
@@ -59,7 +59,7 @@ hist(incidents_85_99-incidents_00_14)
 
 Unluckily, this assumption cannot be applied to this data due to the two big outliers. If the outliers are eliminate though, one can clearly see an underlying Normal Distribution.
 
-```{r, echo=FALSE, fig.height = 4}
+```{r, echo=FALSE, fig.height = 3.5}
 insad=incidents_85_99-incidents_00_14
 par(mfrow=c(1,2))
 qqnorm(insad[insad<15])
@@ -97,8 +97,7 @@ permutation_test(mystat, incidents_85_99, incidents_00_14)
 The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, it can be concluded that there is a significant difference between both periods in terms of the number of incidents.
 
 \subsection{Fatal Accidents}
-<<<<<<< HEAD
-```{r, echo=FALSE, fig.height = 4}
+```{r, echo=FALSE, fig.height = 3.5}
 par(mfrow=c(1,2))
 qqnorm(fatal_accidents_85_99-fatal_accidents_00_14)
 hist(fatal_accidents_85_99-fatal_accidents_00_14)
@@ -106,7 +105,7 @@ hist(fatal_accidents_85_99-fatal_accidents_00_14)
 
 In terms of Fatal Accidents, there is a similar state as before. The plots do not seem to resemble a Normal Distribution, although it may be caused by the clearly detectable outliers. Therefore, the distribution will be checked after getting rid of these outliers:
 
-```{r, echo=FALSE, fig.height = 4}
+```{r, echo=FALSE, fig.height = 3.5}
 fatal=fatal_accidents_85_99-fatal_accidents_00_14
 par(mfrow=c(1,2))
 qqnorm(fatal[fatal<7])
@@ -123,7 +122,7 @@ Again, the test on Fatal Accidents clearly shows that there is a significant dif
 
 \subsection{Fatalities}
 
-```{r, echo=FALSE, fig.height = 4}
+```{r, echo=FALSE, fig.height = 3.5}
 par(mfrow=c(1,2))
 qqnorm(fatalities_85_99-fatalities_00_14)
 hist(fatalities_85_99-fatalities_00_14)
