@@ -8,15 +8,10 @@ output:
   word_document: default
 highlight: tango
 fontsize: 11pt
-fig_height: 4
+fig_height: 3
 ---
 
 \section{Introduction}
-%Reserach questions
-%Why is it important
-%Whats is in the data
-
-%Is a place a 
 
 Air travel increased by blah% in 2016 [reference] in the USA. However, what is relevant or significant when a crash occurs. In this paper this topic will be discussed. The first question that would be interesting is to check to see if a plane that crashes is more likely to crash in a periods after ther the crash. Also additional intresting questions to consinder are if the location of the crash is signicant and if the choice of plane manufacturer has an impact on the number of fatalities. 
 The datasets used to check this will be drawn from two sources. The first source is taken from the github repository of "fivethirtyeight" which contains some general airline saftey statistics from 1980s to 2010s. The second is drawn from the opendata.socrata site which contains more detailed data on airline statistics. 
@@ -39,7 +34,7 @@ attach(airline)
 print(names(airline))
 ```
 
-The data is in terms of incidents, fatal accidents and fatalities. With this dataset, testing how the flying industry has improved over the years can be used as a starting point for our reasearch.\\
+The data is in terms of incidents, fatal accidents and fatalities. With this dataset, testing how the flying industry has improved over the years can be used as a starting point for our reasearch.
 The data can be expressed as an experiment of individuals (in this case airlines) that are tested on two periods of time. Per experimental unit, there are amount of incidents, fatal accidents and fatalities. That is three numerical outcomes over two periods per experimental unit. On this dataset the hypothesis that the difference on the mean between the two periods is 0 will be tested. In other words, the test will be the amount of aerial accidents/fatalities that remains unchanged over time without neither improvement nor deterioration.
 
 \subsection{Plots}
@@ -102,7 +97,7 @@ permutation_test(mystat, incidents_85_99, incidents_00_14)
 The permutation test clearly backs what was previously seen in the Two-Paired test. Therefore, it can be concluded that there is a significant difference between both periods in terms of the number of incidents.
 
 \subsection{Fatal Accidents}
-```{r, echo=False}
+```{r, echo=FALSE}
 par(mfrow=c(1,2))
 qqnorm(fatal_accidents_85_99-fatal_accidents_00_14)
 hist(fatal_accidents_85_99-fatal_accidents_00_14)
@@ -201,6 +196,6 @@ setup_data <- function(date, range, data) {
 This function is created to aggregate the data for a year. This gives for each airline a before and after figure. This function is fed a year and range. The range selects the range plus and minus around the year given. The aim is to provide a data set where it can be determined if a plane crashes(the before column) are they more likely to crash in the near future(the after column). Serveal dates are used 1965, 1975, 1985 , 1995 and 2004. The range used will be 5 years.
 
 ```{r}
-aggregate_data = setup_data(1965, 5, airlines_selection_data)
+aggregate_data = setup_data(1965, 5, airlines_data)
 
 ```
