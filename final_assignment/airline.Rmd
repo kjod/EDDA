@@ -3,8 +3,8 @@ title: "Final Project, EDDA 2017"
 author: "Martin de la Riva(11403799) and Kieran O'Driscoll(11426438), Group 23"
 date: "01 June 2017"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 highlight: tango
 fontsize: 11pt
