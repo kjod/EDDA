@@ -213,21 +213,19 @@ range = 15
 print(paste("Testing on year:", year, " Using range:", range))
 aggregate_data = setup_data(year, range, airlines_data)
 mystat=function(x,y) {mean(x-y)}
-print(permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after))
+permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
 
 year = 1975
 range = 10
 print(paste("Testing on year:", year, " Using range:", range))
 aggregate_data = setup_data(year, range, airlines_data)
-mystat=function(x,y) {mean(x-y)}
-print(permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after))
+permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
 
 year = 2004
 range = 5
 print(paste("Testing on year:", year, " Using range:", range))
 aggregate_data = setup_data(year, range, airlines_data)
-mystat=function(x,y) {mean(x-y)}
-print(permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after))
+permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggregate_data$after)
 ```
 \subsection{Conclusions}
 
