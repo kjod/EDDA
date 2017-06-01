@@ -203,10 +203,10 @@ The plot above shows the amount of accidents per year. It reveals how, with the 
 
 To check what test can be applied, the distrubution of the data is checked. 
 
-```{r, echo=FALSE, fig.height = 3.5}
-par(mfrow=c(1,2))
-hist(airlines_data$Fatalities)
-qqnorm(airlines_data$Fatalities)
+```{r, echo=FALSE, fig.height = 2.5}
+par(mfrow=c(1,2), mar=c(2.1, 3.1, 3.1, 2.1))
+qqnorm(airlines_data$Fatalities, xlab="", ylab="")
+hist(airlines_data$Fatalities, xlab="", ylab="")
 ```
 The data is clearly not normally distrubuted which will filter out any statistical test that is based on this assumption. In this case a permuation test will be used, however to do this the data needs to be formatted in such away in which it has two groups of experimental units.
 
@@ -290,6 +290,10 @@ permutation_test(mystat=function(x,y) {mean(x-y)}, aggregate_data$before, aggreg
 ```
 
 From this, two conclusions van be drawn. One that the range used has a impact on the p-value, this is seeb in 1975 has the p-value increase but only by a small amount. Secondly, the date 1955 seems significant. After some research it was found that the period from 1950s and 1960s is known as the golden age in aviation \cite{goldenage}. Air travel became a much more affordable option for people to persue but lacked many of the saftey standards implemeted today. This could make the risk of crashing higher however this would have to be investigated further.
+
+\subsection{which other factors may influence?}
+A test will be reproduced to test wether unexpected factors may have an influence on the amounts of accidents. Manufacturer is one factor that may have an influence. Therefore, the data will be grouped on accidents per Manufacturer. For these tests, only data from 1980 on advance will be taken into acount, counting only on modern aircrafts. Also, the difference in the amount of accidents between the previous decades could corrupt our data.
+
 
 \section{Conclusions}
 STILL TODO, THAT IS ONLY ONE PART OF THE CONCLUSION
